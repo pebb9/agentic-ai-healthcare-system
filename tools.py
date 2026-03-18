@@ -32,7 +32,14 @@ async def assess_symptoms(symptoms: str, patient_context: str = "") -> dict:
     print("  [MCP] assess_symptoms")
 
     raw = await ask_medgemma(
-        f"Patient symptoms: \n{symptoms}",
+        f"""A patient says: "{symptoms}"
+
+Classify urgency in: high, medium, or low. Also take the patient context into account if provided.
+- high   = needs emergency care today
+- medium = should see a doctor within a few days
+- low    = routine appointment is fine
+
+Reply in one word and also provide a brief explanation of which symptoms or context features led to that classification. Then suggest 1-3 doctor specialties that would be a good match for these symptoms.""",
         patient_context=patient_context,
     )
 
