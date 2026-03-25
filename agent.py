@@ -22,7 +22,7 @@ async def run_agent(symptoms: str, patient_context: str = "") -> dict:
     Returns:
         dict with keys: urgency, doctors, raw_llm_response, advice
     """
-    _header("MEDGEMMA REACT AGENT")
+    _header("MEDGEMMA AGENT")
 
     if patient_context:
         print(f"  [RAG] Context injected — {len(patient_context)} chars")

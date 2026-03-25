@@ -16,18 +16,21 @@ def _load_model():
     with _lock:
         if _model is not None:
             return      # model already loaded
-        
-        print("Loading MedGemma model...")
+
+        print("\nLoading MedGemma model...\n")
 
         _model = AutoModelForImageTextToText.from_pretrained(
             MEDGEMMA_MODEL,
-            torch_dtype=torch.bfloat16, # recommended by Google
+            dtype=torch.bfloat16, # recommended by Google
             device_map="auto"   # spreads across available GPUs
         )
-        _processor = AutoProcessor.from_pretrained(MEDGEMMA_MODEL)
+        _processor = AutoProcessor.from_pretrained(
+            MEDGEMMA_MODEL,
+            use_fast="False"    # uses slower processor to achieve better results
+        )
         _model.eval()
 
-        print("Model ready.")
+        print("\nModel ready to receive user symptoms.\n\n")
 
 
 async def ask_medgemma(prompt: str, patient_context: str = "") -> str:
