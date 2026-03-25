@@ -17,7 +17,7 @@ from database import (
     mark_slot_booked,
     create_booking,
 )
-from llm import ask_medgemma
+from llm.llm_27b_text_it import ask_medgemma
 
 
 # ── Tool 1: assess_symptoms ───────────────────────────────────────────────────
