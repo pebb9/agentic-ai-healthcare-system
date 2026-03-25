@@ -3,7 +3,7 @@ import torch
 from transformers import AutoProcessor, AutoModelForImageTextToText
 from threading import Lock
 
-MEDGEMMA_MODEL = "google/medgemma-4b-it"
+MEDGEMMA_MODEL = "google/medgemma-27b-it"
 
 _processor = None
 _model = None
