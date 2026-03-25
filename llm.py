@@ -1,54 +1,80 @@
-# llm.py — MedGemma client via Ollama
 
-import httpx
+import torch
+from transformers import AutoProcessor, AutoModelForImageTextToText
+from threading import Lock
 
-from config import MODEL, OLLAMA_URL
+MEDGEMMA_MODEL = "google/medgemma-4b-it"
 
-_GENERATE_URL = "http://localhost:11434/api/generate"
-_TIMEOUT      = 120.0
+_processor = None
+_model = None
+_lock = Lock()
+
+def _load_model():
+    """Load processor and model into GPU memory"""
+    global _processor, _model
+
+    with _lock:
+        if _model is not None:
+            return      # model already loaded
+        
+        print("Loading MedGemma model...")
+
+        _model = AutoModelForImageTextToText.from_pretrained(
+            MEDGEMMA_MODEL,
+            torch_dtype=torch.bfloat16, # recommended by Google
+            device_map="auto"   # spreads across available GPUs
+        )
+        _processor = AutoProcessor.from_pretrained(MEDGEMMA_MODEL)
+        _model.eval()
+
+        print("Model ready.")
 
 
 async def ask_medgemma(prompt: str, patient_context: str = "") -> str:
     """
-    Send a prompt to MedGemma via Ollama and return the response text.
+    Send a prompt to MedGemma agent and return the response text.
 
     If patient_context is provided it is prepended to the prompt, making
     the patient record visible to the model (RAG-style injection).
-
-    Falls back from the /api/generate endpoint to /api/chat if the first
-    attempt fails, to handle different Ollama versions gracefully.
     """
-    full_prompt = f"{patient_context}\n\n{prompt}" if patient_context else prompt
+    _load_model()
 
-    attempts = [
-        (
-            _GENERATE_URL,
-            {"model": MODEL, "prompt": full_prompt, "stream": False},
-        ),
-        (
-            OLLAMA_URL,
-            {
-                "model":    MODEL,
-                "messages": [{"role": "user", "content": full_prompt}],
-                "stream":   False,
-            },
-        ),
+    full_prompt = f"Patient background: \n{patient_context}\n\n{prompt}" if patient_context else prompt
+
+    messages = [
+        {
+            "role": "system",
+            "content": [{"type": "text", "text": """You are a medical triage assistant. Do not share personal data and keep patient privacy."
+                         Classify urgency in: high, medium, or low. Also take the patient context into account if provided.
+                         - high   = needs emergency care today
+                         - medium = should see a doctor within a few days
+                         - low    = routine appointment is fine
+                         
+                         Reply in one word and also provide a brief explanation of which symptoms or context features led to that classification.
+                         Then suggest 1-3 doctor specialties that would be a good match for these symptoms.
+                         """}]
+        },
+        {
+            "role": "user",
+            "content": [{"type": "text", "text": full_prompt}]
+        }
     ]
 
-    last_error = "no response"
-    for url, payload in attempts:
-        try:
-            async with httpx.AsyncClient(timeout=_TIMEOUT) as client:
-                response = await client.post(url, json=payload)
-                response.raise_for_status()
-                data = response.json()
-                text = (
-                    data.get("response")
-                    or data.get("message", {}).get("content", "")
-                )
-                if text:
-                    return text.strip()
-        except Exception as exc:
-            last_error = str(exc)
+    try:
+        inputs = _processor.apply_chat_template(
+            messages, add_generation_prompt=True, tokenize=True,
+            return_dict=True, return_tensors="pt"
+        ).to(_model.device, dtype=torch.bfloat16)
 
-    return f"[MedGemma unavailable: {last_error}]"
+        input_len = inputs["input_ids"].shape[-1]
+
+        with torch.inference_mode():
+            generation = _model.generate(
+                **inputs, max_new_tokens=512, do_sample=False
+            )
+            generation = generation[0][input_len:]
+        
+        return _processor.decode(generation, skip_special_tokens=True).strip()
+    
+    except Exception as exc:
+        return f"MEDGEMMA UNAVAILABLE: {exc}"
