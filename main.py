@@ -7,10 +7,10 @@
 
 import asyncio
 
-from agent    import run_agent
-from database import init_db, get_patient, create_patient
-from rag      import build_full_context
-from tools    import get_slots, book_slot
+from agent      import run_agent
+from database   import init_db, get_patient, create_patient
+from rag        import build_full_context
+from mcp_client import call_tool
 
 
 async def main() -> None:
@@ -28,10 +28,10 @@ async def main() -> None:
         if patient:
             print(f"\n  [DB] Found: {patient['name']} | {patient['age']} yrs, "
                   f"{patient['gender']} | {patient['disease']}")
-            # Build RAG context: own record + nearby patients
+            # Build RAG context: own record
             patient_context = build_full_context(patient_id)
             print(f"  [RAG] Context loaded — {len(patient_context)} chars "
-                  f"(own record + 3 nearby)")
+                  f"(own record)")
         else:
             print(f"  [DB] Patient '{patient_id}' not found — registering.")
             name    = input("  Full name              : ").strip() or "Anonymous"
@@ -66,7 +66,10 @@ async def main() -> None:
     # ── Slot selection ────────────────────────────────────────────────────
     print()
     print(f"[7] ACT")
-    slot_result = get_slots(selected["id"], urgency)
+    slot_result = await call_tool("tool_get_slots", {
+        "doctor_id": selected["id"],
+        "urgency":   urgency,
+    })
 
     print(f"\n[8] OBSERVE")
     print(f"  Found {slot_result['total_free_found']} free slot(s) "
@@ -88,8 +91,12 @@ async def main() -> None:
     # ── Booking ───────────────────────────────────────────────────────────
     print()
     print("[9] ACT")
-    booking = book_slot(selected["id"], chosen["slot_key"],
-                        patient_id or "UNKNOWN", symptoms)
+    booking = await call_tool("tool_book_slot", {
+        "doctor_id":  selected["id"],
+        "slot_key":   chosen["slot_key"],
+        "patient_id": patient_id or "UNKNOWN",
+        "symptoms":   symptoms,
+    })
 
     print("\n[10] OBSERVE")
     if not booking["success"]:
