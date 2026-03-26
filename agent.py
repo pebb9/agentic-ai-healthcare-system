@@ -8,7 +8,9 @@
 #   5. Observe  — log advice
 #   6. Respond  — surface results to the caller
 
-from tools import assess_symptoms, get_advice
+# All tool calls go through mcp_client.call_tool() over HTTP.
+# tools.py business logic is completely unchanged — only the transport differs.
+from mcp_client import call_tool
 
 
 async def run_agent(symptoms: str, patient_context: str = "") -> dict:
@@ -31,9 +33,14 @@ async def run_agent(symptoms: str, patient_context: str = "") -> dict:
     _step(1, "REASON")
     print(f'  Symptoms: "{symptoms}"')
 
-    # ── Step 2: Act — assess symptoms ─────────────────────────────────────
+    # ── Step 2: Act — assess symptoms via MCP ─────────────────────────────
+    # Sends a JSON-RPC request to the MCP server, which runs
+    # assess_symptoms() in tools.py and returns the result as JSON.
     _step(2, "ACT")
-    assessment = await assess_symptoms(symptoms, patient_context=patient_context)
+    assessment = await call_tool("tool_assess_symptoms", {
+        "symptoms":        symptoms,
+        "patient_context": patient_context,
+    })
 
     # ── Step 3: Observe ───────────────────────────────────────────────────
     _step(3, "OBSERVE")
@@ -41,13 +48,13 @@ async def run_agent(symptoms: str, patient_context: str = "") -> dict:
     print(f"  Raw LLM output : {assessment['raw_llm_response']!r}")
     print(f"  Doctors        : {', '.join(d['name'] for d in assessment['doctors'])}")
 
-    # ── Step 4: Act — get self-care advice ────────────────────────────────
+    # ── Step 4: Act — get self-care advice via MCP ────────────────────────
     _step(4, "ACT")
-    advice_result = await get_advice(
-        symptoms,
-        assessment["urgency"],
-        patient_context=patient_context,
-    )
+    advice_result = await call_tool("tool_get_advice", {
+        "symptoms":        symptoms,
+        "urgency":         assessment["urgency"],
+        "patient_context": patient_context,
+    })
 
     # ── Step 5: Observe ───────────────────────────────────────────────────
     _step(5, "OBSERVE")
