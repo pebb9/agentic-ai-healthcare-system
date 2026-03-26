@@ -91,14 +91,31 @@ def init_db() -> None:
     else:
         print(f"  [DB] Patients already loaded: {patient_count:,} records")
 
+    today_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+
     seeded  = {r[0] for r in cur.execute("SELECT DISTINCT doctor_id FROM slots").fetchall()}
     missing = [d for d in DOCTORS if d["id"] not in seeded]
     if missing:
         print(f"  [DB] Seeding {len(missing)} doctor(s): {[d['name'] for d in missing]}")
         _seed_slots(conn, missing)
-    else:
-        total = cur.execute("SELECT COUNT(*) FROM slots").fetchone()[0]
-        print(f"  [DB] Loaded existing calendar ({total} slots)")
+
+    # Re-seed any doctor whose remaining free slots are all in the past
+    stale = []
+    for doc in DOCTORS:
+        future_free = cur.execute(
+            "SELECT COUNT(*) FROM slots WHERE doctor_id = ? AND status = 'free' AND slot_key >= ?",
+            (doc["id"], today_str),
+        ).fetchone()[0]
+        if future_free == 0:
+            stale.append(doc)
+
+    if stale:
+        print(f"  [DB] Re-seeding {len(stale)} doctor(s) with fresh slots: "
+              f"{[d['name'] for d in stale]}")
+        _seed_slots(conn, stale)
+
+    total = cur.execute("SELECT COUNT(*) FROM slots").fetchone()[0]
+    print(f"  [DB] Loaded existing calendar ({total} slots)")
 
     conn.close()
 

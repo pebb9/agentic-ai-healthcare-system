@@ -7,10 +7,11 @@
 
 import asyncio
 
-from agent    import run_agent
-from database import init_db, get_patient, create_patient
-from rag      import build_full_context
-from tools    import get_slots, book_slot
+from agent       import run_agent
+from database    import init_db, get_patient, create_patient
+from rag         import build_full_context
+from tools       import get_slots, book_slot
+from Validations import validate_advice, validate_booking, validate_patient_id, validate_symptoms
 
 
 async def main() -> None:
@@ -19,38 +20,52 @@ async def main() -> None:
 
     # ── Identify patient ──────────────────────────────────────────────────
     print()
-    patient_id = input("Your Patient ID (e.g. PT-00042, or press Enter to skip): ").strip().upper()
+    while True:
+        raw_id     = input("Your Patient ID (e.g. PT-00042): ").strip().upper()
+        valid, err = validate_patient_id(raw_id)
+        if valid:
+            patient_id = raw_id
+            break
+        print(err)
 
     patient_context = ""
-    if patient_id:
-        patient = get_patient(patient_id)
+    patient = get_patient(patient_id)
 
-        if patient:
-            print(f"\n  [DB] Found: {patient['name']} | {patient['age']} yrs, "
-                  f"{patient['gender']} | {patient['disease']}")
-            # Build RAG context: own record + nearby patients
-            patient_context = build_full_context(patient_id)
-            print(f"  [RAG] Context loaded — {len(patient_context)} chars "
-                  f"(own record + 3 nearby)")
-        else:
-            print(f"  [DB] Patient '{patient_id}' not found — registering.")
-            name    = input("  Full name              : ").strip() or "Anonymous"
-            age_str = input("  Age                    : ").strip()
-            age     = int(age_str) if age_str.isdigit() else 0
-            gender  = input("  Gender (Male/Female/Other): ").strip() or "Other"
-            create_patient(patient_id, name, age, gender, symptoms="")
-            print(f"  [DB] Registered as {patient_id}.")
+    if patient:
+        print(f"\n  [DB] Found: {patient['name']} | {patient['age']} yrs, "
+              f"{patient['gender']} | {patient['disease']}")
+        # Build RAG context: own record + nearby patients
+        patient_context = build_full_context(patient_id)
+        print(f"  [RAG] Context loaded — {len(patient_context)} chars "
+              f"(own record + 3 nearby)")
+    else:
+        print(f"  [DB] Patient '{patient_id}' not found — registering.")
+        name    = input("  Full name              : ").strip() or "Anonymous"
+        age_str = input("  Age                    : ").strip()
+        age     = int(age_str) if age_str.isdigit() else 0
+        gender  = input("  Gender (Male/Female/Other): ").strip() or "Other"
+        create_patient(patient_id, name, age, gender, symptoms="")
+        print(f"  [DB] Registered as {patient_id}.")
 
     # ── Symptom triage ────────────────────────────────────────────────────
     print()
-    symptoms = input("Describe your symptoms: ").strip()
-    if not symptoms:
-        print("No symptoms entered. Exiting.")
-        return
+    while True:
+        symptoms   = input("Describe your symptoms: ").strip()
+        valid, err = validate_symptoms(symptoms)
+        if valid:
+            break
+        print(err)
 
     result  = await run_agent(symptoms, patient_context=patient_context)
     urgency = result["urgency"]
     doctors = result["doctors"]
+
+    # ── Validate advice output ────────────────────────────────────────────
+    advice          = result.get("advice", "")
+    valid, fallback = validate_advice(advice)
+    if not valid:
+        result["advice"] = fallback
+        print(f"\n  [WARN] Advice validation failed — showing fallback message.")
 
     # ── Doctor selection ──────────────────────────────────────────────────
     print()
@@ -76,24 +91,39 @@ async def main() -> None:
         print(f"  No free slots for {selected['name']}. Try another doctor.")
         return
 
+    # Filter out past slots before showing them to the patient
+    future_slots = [s for s in slot_result["slots"] if s["days_away"] >= 0]
+    if not future_slots:
+        print(f"  All available slots are in the past. Please try again tomorrow.")
+        return
+
     print()
     print(f"Available slots for {selected['name']}:")
-    for i, slot in enumerate(slot_result["slots"], 1):
-        label = "tomorrow" if slot["days_away"] == 1 else f"in {slot['days_away']} days"
+    for i, slot in enumerate(future_slots, 1):
+        label = "today" if slot["days_away"] == 0 else \
+                "tomorrow" if slot["days_away"] == 1 else \
+                f"in {slot['days_away']} days"
         print(f"  {i}. {slot['date']} at {slot['time']}  ({label})")
 
-    slot_choice = _prompt_int("\nEnter slot number: ", lo=1, hi=len(slot_result["slots"]))
-    chosen      = slot_result["slots"][slot_choice - 1]
+    slot_choice = _prompt_int("\nEnter slot number: ", lo=1, hi=len(future_slots))
+    chosen      = future_slots[slot_choice - 1]
 
     # ── Booking ───────────────────────────────────────────────────────────
     print()
     print("[9] ACT")
     booking = book_slot(selected["id"], chosen["slot_key"],
-                        patient_id or "UNKNOWN", symptoms)
+                        patient_id, symptoms)
 
     print("\n[10] OBSERVE")
     if not booking["success"]:
         print(f"  Booking failed: {booking['reason']}")
+        return
+
+    # ── Validate booking output ───────────────────────────────────────────
+    valid, err = validate_booking(booking)
+    if not valid:
+        print(f"  [WARN] Booking confirmation looks malformed: {err}")
+        print("  Please contact reception to confirm your appointment.")
         return
 
     _print_confirmation(patient_id, booking, selected, chosen)
@@ -123,7 +153,7 @@ def _print_confirmation(patient_id: str, booking: dict,
     print("=" * 55)
     print("  BOOKING CONFIRMED  (saved to calendar.db)")
     print("=" * 55)
-    print(f"  Patient ID : {patient_id or 'UNKNOWN'}")
+    print(f"  Patient ID : {patient_id}")
     if booking["patient_found_in_db"]:
         print(f"  Name       : {booking['patient_name']}")
         print(f"  DOB        : {booking['patient_dob']}")

@@ -1,0 +1,20 @@
+# Install with:  pip install -r requirements.txt
+
+# External prerequisites (not pip-installable):
+#   1. Ollama running locally:
+#        https://ollama.com/download
+#        ollama pull alibayram/medgemma:4b
+
+# Agent downloads
+
+# HTTP client — used by llm.py to call Ollama
+httpx>=0.27.0
+
+# MCP protocol — server + client (mcp_server.py, mcp_client.py)
+# Requires Python >= 3.10
+mcp[cli]>=1.26.0
+
+# HarmBench security evaluation
+
+# Progress bars — used by harmbench/runner.py
+tqdm>=4.66.0
