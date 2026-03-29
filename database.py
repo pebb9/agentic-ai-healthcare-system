@@ -128,6 +128,7 @@ def init_db() -> None:
     _seed_appointments(conn)
     _seed_medical_records(conn)
     _seed_slots_from_doctors(conn)
+    _sync_slots_with_appointments(conn)
 
     conn.close()
 
@@ -380,7 +381,7 @@ def get_all_doctors() -> list[sqlite3.Row]:
         """
     ).fetchall()
     conn.close()
-    return rows
+    return rows 
 
 
 def get_doctor_by_user(user_id: str) -> sqlite3.Row | None:
@@ -626,3 +627,50 @@ def get_appointments_for_patient(patient_id: str, limit: int = 20) -> list[sqlit
     ).fetchall()
     conn.close()
     return rows
+
+#This is to make up for appointment seeding matches. 
+def _sync_slots_with_appointments(conn: sqlite3.Connection) -> None:
+    """
+    Reconcile slot status with seeded appointments.
+    Non-cancelled appointments should occupy their corresponding slots.
+    Cancelled appointments should not block a slot.
+    """
+    rows = conn.execute(
+        """
+        SELECT doctor_id, scheduled_at, status
+        FROM appointments
+        """
+    ).fetchall()
+
+    booked_count = 0
+    freed_count = 0
+
+    for row in rows:
+        doctor_id = row["doctor_id"]
+        slot_key = row["scheduled_at"]
+        status = row["status"]
+
+        if status in ("BOOKED", "COMPLETED"):
+            conn.execute(
+                """
+                UPDATE slots
+                SET status = 'booked'
+                WHERE doctor_id = ? AND slot_key = ?
+                """,
+                (doctor_id, slot_key),
+            )
+            booked_count += 1
+
+        elif status == "CANCELLED":
+            conn.execute(
+                """
+                UPDATE slots
+                SET status = 'free'
+                WHERE doctor_id = ? AND slot_key = ?
+                """,
+                (doctor_id, slot_key),
+            )
+            freed_count += 1
+
+    conn.commit()
+    print(f"  [DB] Synced slots with appointments ({booked_count} booked, {freed_count} freed)")
