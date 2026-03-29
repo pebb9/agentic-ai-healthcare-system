@@ -23,6 +23,8 @@ async def tool_assess_symptoms(
     patient_id: str = "",
     patient_context: str = "",
 ) -> str:
+    user_id = f"USER-{patient_id}" if patient_id else None
+
     call_id = log_tool_call(
         tool_name="tool_assess_symptoms",
         arguments={
@@ -30,6 +32,7 @@ async def tool_assess_symptoms(
             "patient_id": patient_id,
             "patient_context": patient_context,
         },
+        user_id=user_id,
         patient_id=patient_id or None,
     )
 
@@ -37,7 +40,6 @@ async def tool_assess_symptoms(
     try:
         result = await assess_symptoms(
             symptoms,
-            patient_id=patient_id or None,
             patient_context=patient_context,
         )
         log_tool_result(
@@ -66,6 +68,8 @@ async def tool_get_advice(
     patient_id: str = "",
     patient_context: str = "",
 ) -> str:
+    user_id = f"USER-{patient_id}" if patient_id else None
+
     call_id = log_tool_call(
         tool_name="tool_get_advice",
         arguments={
@@ -74,6 +78,7 @@ async def tool_get_advice(
             "patient_id": patient_id,
             "patient_context": patient_context,
         },
+        user_id=user_id,
         patient_id=patient_id or None,
     )
 
@@ -82,7 +87,6 @@ async def tool_get_advice(
         result = await get_advice(
             symptoms,
             urgency,
-            patient_id=patient_id or None,
             patient_context=patient_context,
         )
         log_tool_result(
@@ -135,6 +139,8 @@ def tool_get_slots(doctor_id: str, urgency: str) -> str:
 
 @mcp.tool()
 def tool_book_slot(doctor_id: str, slot_key: str, patient_id: str, symptoms: str) -> str:
+    user_id = f"USER-{patient_id}" if patient_id else None
+
     call_id = log_tool_call(
         tool_name="tool_book_slot",
         arguments={
@@ -143,6 +149,7 @@ def tool_book_slot(doctor_id: str, slot_key: str, patient_id: str, symptoms: str
             "patient_id": patient_id,
             "symptoms": symptoms,
         },
+        user_id=user_id,
         patient_id=patient_id,
     )
 
@@ -173,6 +180,7 @@ def tool_doctor_get_my_appointments(user_id: str) -> str:
     call_id = log_tool_call(
         tool_name="tool_doctor_get_my_appointments",
         arguments={"user_id": user_id},
+        user_id=user_id,
     )
 
     t0 = time.perf_counter()
@@ -216,6 +224,7 @@ def tool_doctor_create_medical_record(
             "diagnosis": diagnosis,
             "appointment_id": appointment_id,
         },
+        user_id=user_id,
         patient_id=patient_id,
     )
 

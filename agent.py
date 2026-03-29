@@ -8,66 +8,67 @@
 #   5. Observe  — log advice
 #   6. Respond  — surface results to the caller
 
-# All tool calls go through mcp_client.call_tool() over HTTP.
-# tools.py business logic is completely unchanged — only the transport differs.
 from mcp_client import call_tool
 
 
-async def run_agent(symptoms: str, patient_context: str = "") -> dict:
+async def run_agent(symptoms: str, patient_id: str = "", patient_context: str = "") -> dict:
     """
     Run the triage ReAct loop and return the assessment result.
 
     Args:
         symptoms:        Free-text symptom description from the patient.
+        patient_id:      Optional patient identifier for DB-backed context use.
         patient_context: Optional RAG context block injected into LLM prompts.
 
     Returns:
         dict with keys: urgency, doctors, raw_llm_response, advice
     """
-    _header("MEDGEMMA REACT AGENT")
+    header("MEDGEMMA REACT AGENT")
 
     if patient_context:
         print(f"  [RAG] Context injected — {len(patient_context)} chars")
 
     # ── Step 1: Reason ────────────────────────────────────────────────────
-    _step(1, "REASON")
+    step(1, "REASON")
     print(f'  Symptoms: "{symptoms}"')
+    if patient_id:
+        print(f"  Patient ID: {patient_id}")
 
     # ── Step 2: Act — assess symptoms via MCP ─────────────────────────────
-    # Sends a JSON-RPC request to the MCP server, which runs
-    # assess_symptoms() in tools.py and returns the result as JSON.
-    _step(2, "ACT")
+    step(2, "ACT")
     assessment = await call_tool("tool_assess_symptoms", {
-        "symptoms":        symptoms,
+        "symptoms": symptoms,
+        "patient_id": patient_id,
         "patient_context": patient_context,
     })
 
     # ── Step 3: Observe ───────────────────────────────────────────────────
-    _step(3, "OBSERVE")
+    step(3, "OBSERVE")
     print(f"  Urgency        : {assessment['urgency'].upper()}")
     print(f"  Raw LLM output : {assessment['raw_llm_response']!r}")
     print(f"  Doctors        : {', '.join(d['name'] for d in assessment['doctors'])}")
 
     # ── Step 4: Act — get self-care advice via MCP ────────────────────────
-    _step(4, "ACT")
+    step(4, "ACT")
     advice_result = await call_tool("tool_get_advice", {
-        "symptoms":        symptoms,
-        "urgency":         assessment["urgency"],
+        "symptoms": symptoms,
+        "urgency": assessment["urgency"],
+        "patient_id": patient_id,
         "patient_context": patient_context,
     })
 
     # ── Step 5: Observe ───────────────────────────────────────────────────
-    _step(5, "OBSERVE")
+    step(5, "OBSERVE")
     print(f"  Advice received — {len(advice_result['advice'])} chars")
 
     # ── Step 6: Respond ───────────────────────────────────────────────────
-    _step(6, "RESPOND")
-    _divider()
+    step(6, "RESPOND")
+    divider()
 
     urgency_labels = {
-        "high":   "HIGH — showing slots within 2 days",
+        "high": "HIGH — showing slots within 2 days",
         "medium": "MEDIUM — showing slots within 5 days",
-        "low":    "LOW — showing slots within 2 weeks",
+        "low": "LOW — showing slots within 2 weeks",
     }
     print(f"  Urgency: {urgency_labels[assessment['urgency']]}")
     print()
@@ -81,16 +82,16 @@ async def run_agent(symptoms: str, patient_context: str = "") -> dict:
     return {**assessment, "advice": advice_result["advice"]}
 
 
-# ── Internal helpers ──────────────────────────────────────────────────────────
-
-def _header(title: str) -> None:
+def header(title: str) -> None:
     print()
     print("=" * 55)
     print(f"  {title}")
     print("=" * 55)
 
-def _step(n: int, label: str) -> None:
+
+def step(n: int, label: str) -> None:
     print(f"\n[{n}] {label}")
 
-def _divider() -> None:
+
+def divider() -> None:
     print("=" * 55)
