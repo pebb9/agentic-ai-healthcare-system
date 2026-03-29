@@ -2,8 +2,11 @@
 
 OLLAMA_URL = "http://localhost:11434/api/chat"
 MODEL      = "alibayram/medgemma:4b"
-DB_FILE    = "calendar.db"
-CSV_FILE   = "Healthcare.csv"
+DB_FILE = "healthcare.db"
+DOCTORS_CSV = "doctors.csv"
+PATIENTS_CSV = "patients.csv"
+APPOINTMENTS_CSV = "appointments.csv"
+MEDICAL_RECORDS_CSV = "medical_records.csv"
 
 DOCTORS = [
     {
