@@ -4,7 +4,7 @@ import csv
 import os
 import random
 import sqlite3
-import string
+import uuid
 from datetime import datetime, timedelta
 
 from config import (
@@ -15,13 +15,10 @@ from config import (
     MEDICAL_RECORDS_CSV,
 )
 
-random.seed(42)
-
-
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 def generate_booking_ref() -> str:
-    return "BK-" + "".join(random.choices(string.ascii_uppercase + string.digits, k=6))
+    return "BK-" + uuid.uuid4().hex[:8].upper() #previous method with string was not guaranteed to be unique, switched to uuid4 hex which is more robust for uniqueness.
 
 
 def _resolve_csv_path(filename: str) -> str | None:
