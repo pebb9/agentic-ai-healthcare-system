@@ -2,7 +2,6 @@
 
 import csv
 import os
-import random
 import sqlite3
 import uuid
 from datetime import datetime, timedelta
@@ -380,20 +379,20 @@ def get_all_doctors() -> list[sqlite3.Row]:
     conn.close()
     return rows 
 
-
-def get_doctor_by_user(user_id: str) -> sqlite3.Row | None:
-    conn = get_connection()
-    row = conn.execute(
-        """
-        SELECT d.*, u.name, u.role
-        FROM doctors d
-        JOIN users u ON u.id = d.user_id
-        WHERE d.user_id = ?
-        """,
-        (user_id.upper(),),
-    ).fetchone()
-    conn.close()
-    return row
+#depricated, leaving it just in case.
+# def get_doctor_by_user(user_id: str) -> sqlite3.Row | None:
+#     conn = get_connection()
+#     row = conn.execute(
+#         """
+#         SELECT d.*, u.name, u.role
+#         FROM doctors d
+#         JOIN users u ON u.id = d.user_id
+#         WHERE d.user_id = ?
+#         """,
+#         (user_id.upper(),),
+#     ).fetchone()
+#     conn.close()
+#     return row
 
 
 def get_patient(patient_id: str) -> sqlite3.Row | None:
