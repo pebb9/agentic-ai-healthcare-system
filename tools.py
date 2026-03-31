@@ -12,7 +12,6 @@ from database import (
     mark_slot_booked,
     create_appointment,
     get_medical_records_for_patient,
-    get_doctor_by_user,
     get_appointments_for_doctor,
     create_medical_record,
     get_appointment
@@ -239,14 +238,14 @@ def build_full_context(patient_id: str) -> str:
 
 # ── Doctor services ───────────────────────────────────────────────────────────
 
-def doctor_get_my_appointments(user_id: str) -> dict:
+def doctor_get_my_appointments(doctor_id: str) -> dict:
     """
-    Doctor-only: list appointments for the doctor account tied to this user_id.
-    Expects something like USER-DOC-001.
+    Doctor-only: list appointments for the doctor account tied to this doctor_id.
+    Expects something like  DOC-001.
     """
-    print(f"  [MCP] doctor_get_my_appointments  user={user_id}")
+    print(f"  [MCP] doctor_get_my_appointments  doctor={doctor_id}")
 
-    doctor = get_doctor_by_user(user_id)
+    doctor = get_doctor(doctor_id)
     if not doctor:
         return {"success": False, "reason": "Doctor account not found."}
 
@@ -274,7 +273,7 @@ def doctor_get_my_appointments(user_id: str) -> dict:
 
 
 def doctor_create_medical_record(
-    user_id: str,
+    doctor_id: str,
     patient_id: str,
     symptoms: str,
     symptom_count: int | None = None,
@@ -293,7 +292,7 @@ def doctor_create_medical_record(
     """
     print(f"  [MCP] doctor_create_medical_record  patient={patient_id}")
 
-    doctor = get_doctor_by_user(user_id)
+    doctor = get_doctor(doctor_id)
     if not doctor:
         return {"success": False, "reason": "Doctor account not found."}
 
