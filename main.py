@@ -5,7 +5,7 @@
 import asyncio
 
 from agent import run_agent
-from database import init_db, get_patient, get_doctor_by_user
+from database import init_db, get_patient, get_doctor
 from tools import build_full_context
 from mcp_client import call_tool
 
@@ -121,17 +121,17 @@ async def patient_flow() -> None:
 # ── Doctor flow ───────────────────────────────────────────────────────────────
 
 async def doctor_flow() -> None:
-    print("Doctor login uses the USER id tied to the doctor account.")
-    print("Example: USER-DOC-001")
-    user_id = input("Your Doctor User ID: ").strip().upper()
+    print("Doctor login uses the DOCTOR id tied to the doctor account.")
+    print("Example: DOC-001")
+    doctor_id = input("Your Doctor ID: ").strip().upper()
 
-    if not user_id:
+    if not doctor_id:
         print("Doctor User ID is required.")
         return
 
-    doctor = get_doctor_by_user(user_id)
+    doctor = get_doctor(doctor_id)
     if not doctor:
-        print(f"  [DB] Doctor account '{user_id}' not found.")
+        print(f"  [DB] Doctor account '{doctor_id}' not found.")
         return
 
     print(
@@ -150,7 +150,7 @@ async def doctor_flow() -> None:
 
         if choice == 1:
             result = await call_tool("tool_doctor_get_my_appointments", {
-                "user_id": user_id,
+                "doctor_id": doctor_id,
             })
             _print_doctor_appointments(result)
 
@@ -164,7 +164,7 @@ async def doctor_flow() -> None:
             symptom_count = int(symptom_count_raw) if symptom_count_raw.isdigit() else 0
 
             result = await call_tool("tool_doctor_create_medical_record", {
-                "user_id": user_id,
+                "doctor_id": doctor_id,
                 "patient_id": patient_id,
                 "symptoms": symptoms,
                 "symptom_count": symptom_count,

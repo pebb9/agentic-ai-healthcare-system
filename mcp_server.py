@@ -176,22 +176,22 @@ def tool_book_slot(doctor_id: str, slot_key: str, patient_id: str, symptoms: str
 
 
 @mcp.tool()
-def tool_doctor_get_my_appointments(user_id: str) -> str:
+def tool_doctor_get_my_appointments(doctor_id: str) -> str:
     call_id = log_tool_call(
         tool_name="tool_doctor_get_my_appointments",
-        arguments={"user_id": user_id},
-        user_id=user_id,
+        arguments={"doctor_id": doctor_id},
+        user_id=doctor_id,
     )
 
     t0 = time.perf_counter()
     try:
-        result = doctor_get_my_appointments(user_id)
+        result = doctor_get_my_appointments(doctor_id)
         log_tool_result(
             call_id=call_id,
             tool_name="tool_doctor_get_my_appointments",
             result=result,
             success=True,
-            duration_ms=(time.perf_counter() - t0) * 1000,
+            duration_ms=(time.perf_counter() - t0) * 1000,  
         )
         return json.dumps(result)
     except Exception as exc:
@@ -207,7 +207,7 @@ def tool_doctor_get_my_appointments(user_id: str) -> str:
 
 @mcp.tool()
 def tool_doctor_create_medical_record(
-    user_id: str,
+    doctor_id: str,
     patient_id: str,
     symptoms: str,
     symptom_count: int = 0,
@@ -217,21 +217,21 @@ def tool_doctor_create_medical_record(
     call_id = log_tool_call(
         tool_name="tool_doctor_create_medical_record",
         arguments={
-            "user_id": user_id,
+            "doctor_id": doctor_id,
             "patient_id": patient_id,
             "symptoms": symptoms,
             "symptom_count": symptom_count,
             "diagnosis": diagnosis,
             "appointment_id": appointment_id,
         },
-        user_id=user_id,
+        user_id=doctor_id,
         patient_id=patient_id,
     )
 
     t0 = time.perf_counter()
     try:
         result = doctor_create_medical_record(
-            user_id=user_id,
+            doctor_id=doctor_id,
             patient_id=patient_id,
             symptoms=symptoms,
             symptom_count=symptom_count or None,
