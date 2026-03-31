@@ -7,7 +7,7 @@ import time
 
 from mcp.server.fastmcp import FastMCP
 
-from tools import assess_symptoms, get_advice, get_slots, book_slot
+from rag import assess_symptoms, get_advice, get_slots, book_slot
 from mcp_logger import log_tool_call, log_tool_result
 
 mcp = FastMCP("healthagent", host="127.0.0.1", port=8000)
