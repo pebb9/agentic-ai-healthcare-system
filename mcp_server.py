@@ -1,3 +1,7 @@
+# mcp_server.py
+# Run with:  python mcp_server.py
+# Listens on: http://127.0.0.1:8000/mcp
+
 import json
 import sys
 import time
@@ -9,6 +13,7 @@ from tools import (
     get_advice,
     get_slots,
     book_slot,
+    cancel_appointment,
     doctor_get_my_appointments,
     doctor_create_medical_record,
 )
@@ -17,6 +22,8 @@ from mcp_logger import log_tool_call, log_tool_result
 mcp = FastMCP("healthagent", host="127.0.0.1", port=8000)
 
 
+# ── Tool 1: assess_symptoms ───────────────────────────────────────────────────
+
 @mcp.tool()
 async def tool_assess_symptoms(
     symptoms: str,
@@ -24,42 +31,23 @@ async def tool_assess_symptoms(
     patient_context: str = "",
 ) -> str:
     user_id = f"USER-{patient_id}" if patient_id else None
-
     call_id = log_tool_call(
-        tool_name="tool_assess_symptoms",
-        arguments={
-            "symptoms": symptoms,
-            "patient_id": patient_id,
-            "patient_context": patient_context,
-        },
-        user_id=user_id,
-        patient_id=patient_id or None,
+        tool_name  = "tool_assess_symptoms",
+        arguments  = {"symptoms": symptoms, "patient_id": patient_id, "patient_context": patient_context},
+        user_id    = user_id,
+        patient_id = patient_id or None,
     )
-
     t0 = time.perf_counter()
     try:
-        result = await assess_symptoms(
-            symptoms,
-            patient_context=patient_context,
-        )
-        log_tool_result(
-            call_id=call_id,
-            tool_name="tool_assess_symptoms",
-            result=result,
-            success=True,
-            duration_ms=(time.perf_counter() - t0) * 1000,
-        )
+        result = await assess_symptoms(symptoms, patient_context=patient_context)
+        log_tool_result(call_id=call_id, tool_name="tool_assess_symptoms", result=result, success=True, duration_ms=(time.perf_counter()-t0)*1000)
         return json.dumps(result)
     except Exception as exc:
-        log_tool_result(
-            call_id=call_id,
-            tool_name="tool_assess_symptoms",
-            result={},
-            success=False,
-            error=str(exc),
-        )
+        log_tool_result(call_id=call_id, tool_name="tool_assess_symptoms", result={}, success=False, error=str(exc))
         raise
 
+
+# ── Tool 2: get_advice ────────────────────────────────────────────────────────
 
 @mcp.tool()
 async def tool_get_advice(
@@ -69,141 +57,99 @@ async def tool_get_advice(
     patient_context: str = "",
 ) -> str:
     user_id = f"USER-{patient_id}" if patient_id else None
-
     call_id = log_tool_call(
-        tool_name="tool_get_advice",
-        arguments={
-            "symptoms": symptoms,
-            "urgency": urgency,
-            "patient_id": patient_id,
-            "patient_context": patient_context,
-        },
-        user_id=user_id,
-        patient_id=patient_id or None,
+        tool_name  = "tool_get_advice",
+        arguments  = {"symptoms": symptoms, "urgency": urgency, "patient_id": patient_id, "patient_context": patient_context},
+        user_id    = user_id,
+        patient_id = patient_id or None,
     )
-
     t0 = time.perf_counter()
     try:
-        result = await get_advice(
-            symptoms,
-            urgency,
-            patient_context=patient_context,
-        )
-        log_tool_result(
-            call_id=call_id,
-            tool_name="tool_get_advice",
-            result=result,
-            success=True,
-            duration_ms=(time.perf_counter() - t0) * 1000,
-        )
+        result = await get_advice(symptoms, urgency, patient_context=patient_context)
+        log_tool_result(call_id=call_id, tool_name="tool_get_advice", result=result, success=True, duration_ms=(time.perf_counter()-t0)*1000)
         return json.dumps(result)
     except Exception as exc:
-        log_tool_result(
-            call_id=call_id,
-            tool_name="tool_get_advice",
-            result={},
-            success=False,
-            error=str(exc),
-        )
+        log_tool_result(call_id=call_id, tool_name="tool_get_advice", result={}, success=False, error=str(exc))
         raise
 
+
+# ── Tool 3: get_slots ─────────────────────────────────────────────────────────
 
 @mcp.tool()
 def tool_get_slots(doctor_id: str, urgency: str) -> str:
     call_id = log_tool_call(
-        tool_name="tool_get_slots",
-        arguments={"doctor_id": doctor_id, "urgency": urgency},
+        tool_name = "tool_get_slots",
+        arguments = {"doctor_id": doctor_id, "urgency": urgency},
     )
-
     t0 = time.perf_counter()
     try:
         result = get_slots(doctor_id, urgency)
-        log_tool_result(
-            call_id=call_id,
-            tool_name="tool_get_slots",
-            result=result,
-            success=True,
-            duration_ms=(time.perf_counter() - t0) * 1000,
-        )
+        log_tool_result(call_id=call_id, tool_name="tool_get_slots", result=result, success=True, duration_ms=(time.perf_counter()-t0)*1000)
         return json.dumps(result)
     except Exception as exc:
-        log_tool_result(
-            call_id=call_id,
-            tool_name="tool_get_slots",
-            result={},
-            success=False,
-            error=str(exc),
-        )
+        log_tool_result(call_id=call_id, tool_name="tool_get_slots", result={}, success=False, error=str(exc))
         raise
 
+
+# ── Tool 4: book_slot ─────────────────────────────────────────────────────────
 
 @mcp.tool()
 def tool_book_slot(doctor_id: str, slot_key: str, patient_id: str, symptoms: str) -> str:
     user_id = f"USER-{patient_id}" if patient_id else None
-
     call_id = log_tool_call(
-        tool_name="tool_book_slot",
-        arguments={
-            "doctor_id": doctor_id,
-            "slot_key": slot_key,
-            "patient_id": patient_id,
-            "symptoms": symptoms,
-        },
-        user_id=user_id,
-        patient_id=patient_id,
+        tool_name  = "tool_book_slot",
+        arguments  = {"doctor_id": doctor_id, "slot_key": slot_key, "patient_id": patient_id, "symptoms": symptoms},
+        user_id    = user_id,
+        patient_id = patient_id,
     )
-
     t0 = time.perf_counter()
     try:
         result = book_slot(doctor_id, slot_key, patient_id, symptoms)
-        log_tool_result(
-            call_id=call_id,
-            tool_name="tool_book_slot",
-            result=result,
-            success=True,
-            duration_ms=(time.perf_counter() - t0) * 1000,
-        )
+        log_tool_result(call_id=call_id, tool_name="tool_book_slot", result=result, success=True, duration_ms=(time.perf_counter()-t0)*1000)
         return json.dumps(result)
     except Exception as exc:
-        log_tool_result(
-            call_id=call_id,
-            tool_name="tool_book_slot",
-            result={},
-            success=False,
-            error=str(exc),
-        )
+        log_tool_result(call_id=call_id, tool_name="tool_book_slot", result={}, success=False, error=str(exc))
         raise
 
+
+# ── Tool 5: cancel_appointment ────────────────────────────────────────────────
+
+@mcp.tool()
+def tool_cancel_appointment(booking_ref: str) -> str:
+    call_id = log_tool_call(
+        tool_name = "tool_cancel_appointment",
+        arguments = {"booking_ref": booking_ref},
+    )
+    t0 = time.perf_counter()
+    try:
+        result = cancel_appointment(booking_ref)
+        log_tool_result(call_id=call_id, tool_name="tool_cancel_appointment", result=result, success=True, duration_ms=(time.perf_counter()-t0)*1000)
+        return json.dumps(result)
+    except Exception as exc:
+        log_tool_result(call_id=call_id, tool_name="tool_cancel_appointment", result={}, success=False, error=str(exc))
+        raise
+
+
+# ── Tool 6: doctor_get_my_appointments ───────────────────────────────────────
 
 @mcp.tool()
 def tool_doctor_get_my_appointments(doctor_id: str) -> str:
     call_id = log_tool_call(
-        tool_name="tool_doctor_get_my_appointments",
-        arguments={"doctor_id": doctor_id},
-        user_id=doctor_id,
+        tool_name = "tool_doctor_get_my_appointments",
+        arguments = {"doctor_id": doctor_id},
+        user_id   = doctor_id,
     )
-
     t0 = time.perf_counter()
     try:
         result = doctor_get_my_appointments(doctor_id)
-        log_tool_result(
-            call_id=call_id,
-            tool_name="tool_doctor_get_my_appointments",
-            result=result,
-            success=True,
-            duration_ms=(time.perf_counter() - t0) * 1000,  
-        )
+        log_tool_result(call_id=call_id, tool_name="tool_doctor_get_my_appointments", result=result, success=True, duration_ms=(time.perf_counter()-t0)*1000)
         return json.dumps(result)
     except Exception as exc:
-        log_tool_result(
-            call_id=call_id,
-            tool_name="tool_doctor_get_my_appointments",
-            result={},
-            success=False,
-            error=str(exc),
-        )
+        log_tool_result(call_id=call_id, tool_name="tool_doctor_get_my_appointments", result={}, success=False, error=str(exc))
         raise
 
+
+# ── Tool 7: doctor_create_medical_record ─────────────────────────────────────
 
 @mcp.tool()
 def tool_doctor_create_medical_record(
@@ -215,47 +161,29 @@ def tool_doctor_create_medical_record(
     appointment_id: str = "",
 ) -> str:
     call_id = log_tool_call(
-        tool_name="tool_doctor_create_medical_record",
-        arguments={
-            "doctor_id": doctor_id,
-            "patient_id": patient_id,
-            "symptoms": symptoms,
-            "symptom_count": symptom_count,
-            "diagnosis": diagnosis,
-            "appointment_id": appointment_id,
-        },
-        user_id=doctor_id,
-        patient_id=patient_id,
+        tool_name  = "tool_doctor_create_medical_record",
+        arguments  = {"doctor_id": doctor_id, "patient_id": patient_id, "symptoms": symptoms, "symptom_count": symptom_count, "diagnosis": diagnosis, "appointment_id": appointment_id},
+        user_id    = doctor_id,
+        patient_id = patient_id,
     )
-
     t0 = time.perf_counter()
     try:
         result = doctor_create_medical_record(
-            doctor_id=doctor_id,
-            patient_id=patient_id,
-            symptoms=symptoms,
-            symptom_count=symptom_count or None,
-            diagnosis=diagnosis or None,
-            appointment_id=appointment_id or None,
+            doctor_id      = doctor_id,
+            patient_id     = patient_id,
+            symptoms       = symptoms,
+            symptom_count  = symptom_count or None,
+            diagnosis      = diagnosis or None,
+            appointment_id = appointment_id or None,
         )
-        log_tool_result(
-            call_id=call_id,
-            tool_name="tool_doctor_create_medical_record",
-            result=result,
-            success=True,
-            duration_ms=(time.perf_counter() - t0) * 1000,
-        )
+        log_tool_result(call_id=call_id, tool_name="tool_doctor_create_medical_record", result=result, success=True, duration_ms=(time.perf_counter()-t0)*1000)
         return json.dumps(result)
     except Exception as exc:
-        log_tool_result(
-            call_id=call_id,
-            tool_name="tool_doctor_create_medical_record",
-            result={},
-            success=False,
-            error=str(exc),
-        )
+        log_tool_result(call_id=call_id, tool_name="tool_doctor_create_medical_record", result={}, success=False, error=str(exc))
         raise
 
+
+# ── Entry point ───────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
     print("HealthAgent MCP server starting on http://127.0.0.1:8000/mcp", file=sys.stderr)
