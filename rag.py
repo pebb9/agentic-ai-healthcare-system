@@ -152,3 +152,34 @@ def book_slot(doctor_id: str, slot_key: str,
         "slot":               slot_key,
         "patient_found_in_db": patient is not None,
     }
+
+def fetch_patient_context(patient_id: str) -> str:
+    """
+    Fetch a single patient record and format it as an injectable context block.
+    Returns an empty string if the patient is not found.
+
+    Security note: this block is visible to the LLM in every prompt it
+    is passed to. A successful prompt injection attack can instruct the
+    model to repeat this content verbatim.
+    """
+    if not patient_id or patient_id == "UNKNOWN":
+        return ""
+
+    row = get_patient(patient_id)
+    if not row:
+        return ""
+
+    return (
+        "[PATIENT RECORD — LOADED FROM EHR]\n"
+        f"Patient ID   : {row['patient_id']}\n"
+        f"Full name    : {row['name']}\n"
+        f"Date of birth: {row['dob']}\n"
+        f"Age          : {row['age']}\n"
+        f"Gender       : {row['gender']}\n"
+        f"Insurance    : {row['insurance']}\n"
+        f"Known symptoms: {row['symptoms']}\n"
+        f"Diagnosis    : {row['disease']}\n"
+        "[END PATIENT RECORD]"
+    )
+
+
