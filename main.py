@@ -1,12 +1,16 @@
 # main.py — CLI entry point
 #
 # Run with: python main.py
+#
+# Patient flow: open-ended — MedGemma decides whether to book, cancel,
+#               ask questions, or anything else.
+# Doctor flow:  unchanged — hardcoded menu for appointments and records.
 
 import asyncio
 
-from agent import run_agent
+from agent    import run_agent
 from database import init_db, get_patient, get_doctor
-from tools import build_full_context
+from tools    import build_full_context
 from mcp_client import call_tool
 
 
@@ -47,75 +51,22 @@ async def patient_flow() -> None:
     patient_context = build_full_context(patient_id)
     print(f"  [RAG] Context loaded — {len(patient_context)} chars")
 
+    # Single open-ended prompt — the agent decides what to do from here.
+    # Patient can say anything:
+    #   "I have chest pain and need to see a doctor"
+    #   "Cancel my booking BK-XXXXXXXX"
+    #   "I need to reschedule, my ref is BK-XXXXXXXX"
     print()
-    symptoms = input("Describe your symptoms: ").strip()
-    if not symptoms:
-        print("No symptoms entered. Exiting.")
+    user_message = input("How can we help you today? ").strip()
+    if not user_message:
+        print("Nothing entered. Exiting.")
         return
 
-    result = await run_agent(
-        symptoms,
-        patient_id=patient_id,
-        patient_context=patient_context,
+    await run_agent(
+        user_message    = user_message,
+        patient_id      = patient_id,
+        patient_context = patient_context,
     )
-    urgency = result["urgency"]
-    doctors = result["doctors"]
-
-    if not doctors:
-        print("No matching doctors were found.")
-        return
-
-    print()
-    print("-" * 55)
-    print("Choose a doctor:")
-    for i, doc in enumerate(doctors, 1):
-        print(f"  {i}. {doc['name']} ({doc['specialty']})")
-
-    doctor_choice = _prompt_int("\nEnter number: ", lo=1, hi=len(doctors))
-    selected = doctors[doctor_choice - 1]
-    print(f"\n  Selected: {selected['name']}")
-
-    print()
-    print("[7] ACT")
-    slot_result = await call_tool("tool_get_slots", {
-        "doctor_id": selected["id"],
-        "urgency": urgency,
-    })
-
-    print("\n[8] OBSERVE")
-    print(
-        f"  Found {slot_result['total_free_found']} free slot(s) "
-        f"within {slot_result['urgency_window_days']}-day window"
-    )
-
-    if not slot_result["slots"]:
-        print(f"  No free slots for {selected['name']}. Try another doctor.")
-        return
-
-    print()
-    print(f"Available slots for {selected['name']}:")
-    for i, slot in enumerate(slot_result["slots"], 1):
-        label = "tomorrow" if slot["days_away"] == 1 else f"in {slot['days_away']} days"
-        print(f"  {i}. {slot['date']} at {slot['time']}  ({label})")
-
-    slot_choice = _prompt_int("\nEnter slot number: ", lo=1, hi=len(slot_result["slots"]))
-    chosen = slot_result["slots"][slot_choice - 1]
-
-    print()
-    print("[9] ACT")
-    booking = await call_tool("tool_book_slot", {
-        "doctor_id": selected["id"],
-        "slot_key": chosen["slot_key"],
-        "patient_id": patient_id,
-        "symptoms": symptoms,
-    })
-
-    print("\n[10] OBSERVE")
-    if not booking["success"]:
-        print(f"  Booking failed: {booking['reason']}")
-        return
-
-    _print_patient_confirmation(patient_id, booking, chosen)
 
 
 # ── Doctor flow ───────────────────────────────────────────────────────────────
@@ -155,23 +106,22 @@ async def doctor_flow() -> None:
             _print_doctor_appointments(result)
 
         elif choice == 2:
-            patient_id = input("Patient ID: ").strip().upper()
-            symptoms = input("Symptoms: ").strip()
-            symptom_count_raw = input("Symptom count (optional): ").strip()
-            diagnosis = input("Diagnosis (optional): ").strip()
-            appointment_id = input("Appointment ID (optional): ").strip().upper()
+            patient_id      = input("Patient ID: ").strip().upper()
+            symptoms        = input("Symptoms: ").strip()
+            symptom_count_r = input("Symptom count (optional): ").strip()
+            diagnosis       = input("Diagnosis (optional): ").strip()
+            appointment_id  = input("Appointment ID (optional): ").strip().upper()
 
-            symptom_count = int(symptom_count_raw) if symptom_count_raw.isdigit() else 0
+            symptom_count = int(symptom_count_r) if symptom_count_r.isdigit() else 0
 
             result = await call_tool("tool_doctor_create_medical_record", {
-                "doctor_id": doctor_id,
-                "patient_id": patient_id,
-                "symptoms": symptoms,
-                "symptom_count": symptom_count,
-                "diagnosis": diagnosis,
+                "doctor_id":      doctor_id,
+                "patient_id":     patient_id,
+                "symptoms":       symptoms,
+                "symptom_count":  symptom_count,
+                "diagnosis":      diagnosis,
                 "appointment_id": appointment_id,
             })
-
             _print_medical_record_result(result)
 
         else:
@@ -195,23 +145,6 @@ def _prompt_int(label: str, lo: int, hi: int) -> int:
         if raw.isdigit() and lo <= int(raw) <= hi:
             return int(raw)
         print(f"  Please enter a number between {lo} and {hi}.")
-
-
-def _print_patient_confirmation(patient_id: str, booking: dict, slot: dict) -> None:
-    print()
-    print("=" * 55)
-    print("  APPOINTMENT CONFIRMED")
-    print("=" * 55)
-    print(f"  Patient ID : {patient_id}")
-    if booking["patient_found_in_db"]:
-        print(f"  Name       : {booking['patient_name']}")
-    print(f"  Doctor     : {booking['doctor_name']}")
-    print(f"  Specialty  : {booking['doctor_specialty']}")
-    print(f"  Date       : {slot['date']}")
-    print(f"  Time       : {slot['time']}")
-    print(f"  Ref        : {booking['booking_ref']}")
-    print(f"  Appt ID    : {booking['appointment_id']}")
-    print("=" * 55)
 
 
 def _print_doctor_appointments(result: dict) -> None:
