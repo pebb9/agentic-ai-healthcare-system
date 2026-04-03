@@ -1,5 +1,6 @@
 # llm.py — MedGemma client via Ollama
 
+import json
 import httpx
 
 from config import MODEL, OLLAMA_URL
@@ -52,3 +53,57 @@ async def ask_medgemma(prompt: str, patient_context: str = "") -> str:
             last_error = str(exc)
 
     return f"[MedGemma unavailable: {last_error}]"
+
+
+async def ask_medgemma_react(messages: list[dict], tools: list[dict]) -> dict:
+    """
+    Send the full conversation history to MedGemma and ask it to decide
+    the next action in the ReAct loop.
+
+    MedGemma must reply with ONLY a JSON object choosing one of:
+      { "action": "call_tool", "tool": "<name>", "args": { ... } }
+      { "action": "ask_user",  "message": "<question for patient>" }
+      { "action": "respond",   "message": "<final answer to patient>" }
+
+    Returns the parsed dict, or a fallback respond action on parse failure.
+    """
+    tool_descriptions = "\n".join(
+        f'- {t["name"]}: {t["description"]}' for t in tools
+    )
+
+    history_text = ""
+    for msg in messages:
+        role    = msg["role"].upper()
+        content = msg["content"]
+        history_text += f"\n[{role}]: {content}"
+
+    decision_prompt = f"""You are a medical appointment agent. Help patients book or cancel appointments by reasoning step by step and calling tools.
+
+Available tools:
+{tool_descriptions}
+
+Conversation so far:
+{history_text}
+
+Decide what to do next. Reply with ONLY valid JSON — no explanation, no markdown, no extra text.
+
+Options:
+1. Call a tool:     {{"action": "call_tool", "tool": "<tool_name>", "args": {{...}}}}
+2. Ask the patient: {{"action": "ask_user",  "message": "<your question>"}}
+3. Final response:  {{"action": "respond",   "message": "<final message to patient>"}}
+
+When you call the tool tool_book_slot, please always ask the patient if the proposed time works for them before confirming the booking. You can call the tool multiple times if needed to find a suitable slot.
+JSON:"""
+
+    raw   = await ask_medgemma(decision_prompt)
+    clean = raw.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
+
+    try:
+        decision = json.loads(clean)
+        if "action" in decision:
+            return decision
+    except (json.JSONDecodeError, ValueError):
+        pass
+
+    # Fallback: treat raw output as a final response
+    return {"action": "respond", "message": raw}
