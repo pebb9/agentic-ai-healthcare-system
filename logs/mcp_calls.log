@@ -72,3 +72,47 @@
 2026-04-04 09:35:11  INFO      RESULT tool_assess_symptoms           call_id=9d951a4b
 2026-04-04 09:39:46  INFO      CALL  tool_assess_symptoms            call_id=9b47a347
 2026-04-04 09:40:03  INFO      RESULT tool_assess_symptoms           call_id=9b47a347
+2026-04-04 11:02:52  INFO      CALL  tool_assess_symptoms            call_id=4000fde1
+2026-04-04 11:02:55  INFO      RESULT tool_assess_symptoms           call_id=4000fde1
+2026-04-04 11:03:47  INFO      CALL  tool_get_slots                  call_id=629df465
+2026-04-04 11:03:47  INFO      RESULT tool_get_slots                 call_id=629df465
+2026-04-04 11:04:31  INFO      CALL  tool_book_slot                  call_id=54449186  user=USER-PT-00005  patient=PT-00005
+2026-04-04 11:04:31  INFO      RESULT tool_book_slot                 call_id=54449186
+2026-04-04 11:05:20  INFO      CALL  tool_book_slot                  call_id=45b3c6aa  user=USER-PT-00005  patient=PT-00005
+2026-04-04 11:05:20  INFO      RESULT tool_book_slot                 call_id=45b3c6aa
+2026-04-04 11:16:36  INFO      CALL  tool_assess_symptoms            call_id=eb2b6ebe
+2026-04-04 11:16:41  INFO      RESULT tool_assess_symptoms           call_id=eb2b6ebe
+2026-04-04 11:22:59  INFO      CALL  tool_assess_symptoms            call_id=accc48e5
+2026-04-04 11:23:02  INFO      RESULT tool_assess_symptoms           call_id=accc48e5
+2026-04-04 11:23:07  INFO      CALL  tool_get_slots                  call_id=238abaa3
+2026-04-04 11:23:07  INFO      RESULT tool_get_slots                 call_id=238abaa3
+2026-04-04 11:25:05  INFO      CALL  tool_assess_symptoms            call_id=85b20087
+2026-04-04 11:25:07  INFO      RESULT tool_assess_symptoms           call_id=85b20087
+2026-04-04 11:25:12  INFO      CALL  tool_assess_symptoms            call_id=f7862923
+2026-04-04 11:25:14  INFO      RESULT tool_assess_symptoms           call_id=f7862923
+2026-04-04 11:25:19  INFO      CALL  tool_get_slots                  call_id=9ccc6185
+2026-04-04 11:25:19  INFO      RESULT tool_get_slots                 call_id=9ccc6185
+2026-04-04 11:31:17  INFO      CALL  tool_assess_symptoms            call_id=ee56e97c
+2026-04-04 11:31:19  INFO      RESULT tool_assess_symptoms           call_id=ee56e97c
+2026-04-04 11:31:24  INFO      CALL  tool_get_slots                  call_id=152792d4
+2026-04-04 11:31:24  INFO      RESULT tool_get_slots                 call_id=152792d4
+2026-04-04 11:36:20  INFO      CALL  tool_assess_symptoms            call_id=38c35ac9
+2026-04-04 11:36:22  INFO      RESULT tool_assess_symptoms           call_id=38c35ac9
+2026-04-04 11:40:33  INFO      CALL  tool_assess_symptoms            call_id=ee38eb7b
+2026-04-04 11:40:35  INFO      RESULT tool_assess_symptoms           call_id=ee38eb7b
+2026-04-04 11:54:00  INFO      CALL  tool_assess_symptoms            call_id=134c3229
+2026-04-04 11:54:03  INFO      RESULT tool_assess_symptoms           call_id=134c3229
+2026-04-04 11:54:52  INFO      CALL  tool_get_slots                  call_id=a04cc3df
+2026-04-04 11:54:52  INFO      RESULT tool_get_slots                 call_id=a04cc3df
+2026-04-04 12:08:43  INFO      CALL  tool_assess_symptoms            call_id=f8bab9f7
+2026-04-04 12:08:46  INFO      RESULT tool_assess_symptoms           call_id=f8bab9f7
+2026-04-04 12:08:51  INFO      CALL  tool_get_slots                  call_id=14ffcdf5
+2026-04-04 12:08:51  INFO      RESULT tool_get_slots                 call_id=14ffcdf5
+2026-04-04 12:09:35  INFO      CALL  tool_book_slot                  call_id=072b1a06  user=USER-PT-00214  patient=PT-00214
+2026-04-04 12:09:35  INFO      RESULT tool_book_slot                 call_id=072b1a06
+2026-04-04 12:11:02  INFO      CALL  tool_assess_symptoms            call_id=d534dab5
+2026-04-04 12:11:04  INFO      RESULT tool_assess_symptoms           call_id=d534dab5
+2026-04-04 12:12:42  INFO      CALL  tool_get_slots                  call_id=fffaf0ee
+2026-04-04 12:12:42  INFO      RESULT tool_get_slots                 call_id=fffaf0ee
+2026-04-04 12:13:08  INFO      CALL  tool_book_slot                  call_id=e8f8325d  user=USER-PT-00234  patient=PT-00234
+2026-04-04 12:13:08  INFO      RESULT tool_book_slot                 call_id=e8f8325d
