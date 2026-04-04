@@ -20,7 +20,7 @@ from llm        import ask_medgemma_react
 TOOLS = [
     {
         "name":        "tool_assess_symptoms",
-        "description": "Classify urgency (high/medium/low) and find matching doctors from patient symptoms.",
+        "description": "Classify urgency (high/medium/low) and find matching doctors from symptoms. Call the tool like this: tool_assess_symptoms({'symptoms': '<symptom>'})",
         "args":        ["symptoms", "patient_id", "patient_context"],
     },
     {
@@ -136,13 +136,29 @@ async def run_agent(user_message: str, patient_id: str = "",
             history.append({"role": "agent",   "content": question})
             history.append({"role": "patient", "content": user_reply})
 
-        # ── respond (done) ────────────────────────────────────────────
+            # Count how many times the patient has already replied to an ask_user.
+            # If they've replied at least once and the model keeps asking,
+            # inject a hard instruction to stop clarifying and assess symptoms.
+            patient_replies = sum(1 for m in history if m["role"] == "patient")
+            if patient_replies >= 2:
+                history.append({
+                    "role":    "observation",
+                    "content": "SYSTEM: The patient has already described their symptoms. Stop asking for more detail. Your next action MUST be call_tool with tool_assess_symptoms.",
+                })
+
+        # ── respond (send message, then continue) ────────────────────
         elif action == "respond":
-            final_message = decision.get("message", "")
+            message = decision.get("message", "")
             _divider()
-            print(f"\n  Agent: {final_message}\n")
-            history.append({"role": "agent", "content": final_message})
-            break
+            print(f"\n  Agent: {message}\n")
+            history.append({"role": "agent", "content": message})
+
+            # Ask if the patient needs anything else
+            follow_up = input("  Patient (or press Enter to finish): ").strip()
+            if not follow_up:
+                final_message = message
+                break
+            history.append({"role": "patient", "content": follow_up})
 
         # ── unknown fallback ──────────────────────────────────────────
         else:
