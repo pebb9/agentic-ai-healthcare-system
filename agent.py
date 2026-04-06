@@ -43,6 +43,16 @@ TOOLS = [
         "description": "Cancel an existing appointment using its booking reference (e.g. BK-XXXXXXXX).",
         "args":        ["booking_ref"],
     },
+    {
+        "name":        "tool_get_appointment_history",
+        "description": "View your past and upcoming appointments.",
+        "args":        ["patient_id"],
+    },
+    {
+        "name":        "tool_get_medical_records",
+        "description": "View your medical records and diagnoses.",
+        "args":        ["patient_id"],
+    }
 ]
 
 MAX_STEPS = 20  # Safety cap — prevents infinite loops
@@ -66,7 +76,15 @@ async def run_agent(user_message: str, patient_id: str = "",
     _header("MEDGEMMA REACT AGENT")
 
     # ── Seed the conversation ─────────────────────────────────────────────
-    system_context = "You are a medical appointment assistant."
+    system_context = (
+        "You are a medical appointment assistant."
+        "Always prioritize the patient's MOST RECENT request. "
+        #"Do not assess symptoms or start booking unless the patient is asking about symptoms, advice, or appointments. "
+        #"If the patient asks to view appointment history, call tool_get_appointment_history. "
+        #"If the patient asks to view medical records, call tool_get_medical_records. "
+        "Do not reuse old symptoms from patient_context unless the patient is explicitly asking about symptoms or medical advice regarding them."
+    )
+
     if patient_id:
         system_context += f" The patient's ID is {patient_id}."
     if patient_context:
