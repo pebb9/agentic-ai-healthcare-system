@@ -14,6 +14,8 @@ from tools import (
     get_slots,
     book_slot,
     cancel_appointment,
+    get_appointment_history,
+    get_medical_records,
     doctor_get_my_appointments,
     doctor_create_medical_record,
 )
@@ -180,6 +182,72 @@ def tool_doctor_create_medical_record(
         return json.dumps(result)
     except Exception as exc:
         log_tool_result(call_id=call_id, tool_name="tool_doctor_create_medical_record", result={}, success=False, error=str(exc))
+        raise
+
+
+# ── Tool 8: get patient appointment history ──────────────────────────────────
+
+@mcp.tool()
+def tool_get_appointment_history(patient_id: str) -> str:
+    user_id = f"USER-{patient_id}" if patient_id else None
+    call_id = log_tool_call(
+        tool_name  = "tool_get_appointment_history",
+        arguments  = {"patient_id": patient_id},
+        user_id    = user_id,
+        patient_id = patient_id or None,
+    )
+    t0 = time.perf_counter()
+    try:
+        result = get_appointment_history(patient_id)
+        log_tool_result(
+            call_id=call_id,
+            tool_name="tool_get_appointment_history",
+            result=result,
+            success=True,
+            duration_ms=(time.perf_counter() - t0) * 1000,
+        )
+        return json.dumps(result)
+    except Exception as exc:
+        log_tool_result(
+            call_id=call_id,
+            tool_name="tool_get_appointment_history",
+            result={},
+            success=False,
+            error=str(exc),
+        )
+        raise
+
+
+# ── Tool 9: get patient medical records ──────────────────────────────────────
+
+@mcp.tool()
+def tool_get_medical_records(patient_id: str) -> str:
+    user_id = f"USER-{patient_id}" if patient_id else None
+    call_id = log_tool_call(
+        tool_name  = "tool_get_medical_records",
+        arguments  = {"patient_id": patient_id},
+        user_id    = user_id,
+        patient_id = patient_id or None,
+    )
+    t0 = time.perf_counter()
+    try:
+        result = get_medical_records(patient_id)
+        log_tool_result(
+            call_id=call_id,
+            tool_name="tool_get_medical_records",
+            result=result,
+            success=True,
+            duration_ms=(time.perf_counter() - t0) * 1000,
+        )
+        return json.dumps(result)
+    except Exception as exc:
+        log_tool_result(
+            call_id=call_id,
+            tool_name="tool_get_medical_records",
+            result={},
+            success=False,
+            error=str(exc),
+        )
         raise
 
 
