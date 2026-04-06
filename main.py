@@ -141,7 +141,8 @@ def _banner() -> None:
 
 def _prompt_int(label: str, lo: int, hi: int) -> int:
     while True:
-        raw = input(label).strip()
+        print(label, end="", flush=True)
+        raw = input().strip()
         if raw.isdigit() and lo <= int(raw) <= hi:
             return int(raw)
         print(f"  Please enter a number between {lo} and {hi}.")
