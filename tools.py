@@ -11,6 +11,7 @@ from database import (
     cancel_appointment_by_ref,
     get_appointments_for_doctor,
     get_medical_records_for_patient, create_medical_record,
+    get_appointments_for_patient
 )
 from llm.llm_27b_text_it import ask_medgemma
 
@@ -254,6 +255,62 @@ def cancel_appointment(booking_ref: str) -> dict:
         "doctor_name":    appointment["doctor_name"],
         "slot":           appointment["scheduled_at"],
     }
+
+# ── Tool 6: get patient appointments ────────────────────────────────────────────────
+def get_appointment_history(patient_id: str) -> dict:
+    print(f"  [MCP] get_appointment_history  patient={patient_id}")
+
+    patient = get_patient(patient_id)
+    if not patient:
+        return {"success": False, "reason": "Patient not found."}
+
+    appointments = get_appointments_for_patient(patient_id, limit=10)
+    if not appointments:
+        return {"success": True, "patient_name": patient["name"], "appointments": [], "message": "No appointments found."}
+
+    history = []
+    for a in appointments:
+        history.append({
+            "date":      a["scheduled_at"],
+            "doctor":    a["doctor_name"],
+            "specialty": a["specialty"],
+            "reason":    a["reason"],
+            "status":    a["status"],
+            "ref":       a["booking_ref"],
+        })
+
+    return {
+        "success":      True,
+        "patient_name": patient["name"],
+        "appointments": history,
+    }
+# ── Tool 7: get patient medical records ────────────────────────────────────────────────
+def get_medical_records(patient_id: str) -> dict:
+    print(f"  [MCP] get_medical_records  patient={patient_id}")
+
+    patient = get_patient(patient_id)
+    if not patient:
+        return {"success": False, "reason": "Patient not found."}
+
+    records = get_medical_records_for_patient(patient_id, limit=10)
+    if not records:
+        return {"success": True, "patient_name": patient["name"], "records": [], "message": "No medical records found."}
+
+    medical = []
+    for r in records:
+        medical.append({
+            "date":      r["created_at"],
+            "symptoms":  r["symptoms"],
+            "diagnosis": r["diagnosis"],
+        })
+
+    return {
+        "success":      True,
+        "patient_name": patient["name"],
+        "records":      medical,
+    }
+
+
 
 
 # ── Doctor tools ──────────────────────────────────────────────────────────────

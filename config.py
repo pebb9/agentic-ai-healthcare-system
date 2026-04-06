@@ -1,7 +1,7 @@
 # config.py — application-wide constants and static data
 
 OLLAMA_URL = "http://localhost:11434/api/chat"
-MODEL      = "alibayram/medgemma:4b"
+MODEL      = "alibayram/medgemma:latest"
 DB_FILE    = "healthcare.db"
 CSV_FILE   = "Healthcare.csv"
 
