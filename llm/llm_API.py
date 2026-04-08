@@ -122,7 +122,7 @@ Options:
 
 JSON:"""
 
-    raw   = await ask_medgemma(decision_prompt)
+    raw   = await ask_medgemma(decision_prompt, )
     clean = raw.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
 
     try:

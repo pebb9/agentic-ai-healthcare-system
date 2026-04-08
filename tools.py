@@ -13,7 +13,7 @@ from database import (
     get_medical_records_for_patient, create_medical_record,
     get_appointments_for_patient
 )
-from llm import ask_medgemma
+from llm.llm_27b_text_it import ask_medgemma
 
 
 # ── Symptom → specialty map (all 28 CSV symptoms covered) ────────────────────
