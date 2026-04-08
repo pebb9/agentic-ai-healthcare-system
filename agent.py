@@ -11,7 +11,7 @@
 #   - Retrying a different doctor if no slots are found
 
 from mcp_client import call_tool
-from llm        import ask_medgemma_react
+from llm.llm_API        import ask_medgemma_react
 
 # ── Tool registry ─────────────────────────────────────────────────────────────
 # Descriptions are what MedGemma reads when deciding what to do next.
