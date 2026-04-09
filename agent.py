@@ -10,8 +10,8 @@
 #   - Asking the patient clarifying questions when needed
 #   - Retrying a different doctor if no slots are found
 
+import json
 from mcp_client import call_tool
-from llm.llm_API        import ask_medgemma_react
 
 # ── Tool registry ─────────────────────────────────────────────────────────────
 # Descriptions are what MedGemma reads when deciding what to do next.
@@ -106,7 +106,7 @@ async def run_agent(user_message: str, patient_id: str = "",
         _step(steps_taken, "REASON → DECIDE")
 
         # Ask MedGemma: what should I do next?
-        decision = await ask_medgemma_react(history, TOOLS)
+        decision = await ask_medgemma_react_remote(history, TOOLS)
         action   = decision.get("action")
 
         print(f"  MedGemma decided: {action}", end="")
@@ -197,6 +197,14 @@ async def run_agent(user_message: str, patient_id: str = "",
 
 
 # ── Internal helpers ──────────────────────────────────────────────────────────
+
+async def ask_medgemma_react_remote(messages: list[dict], tools: list[dict]) -> dict:
+    """Calls ask_medgemma_react via MCP so the model stays in MCP server's process"""
+    result = await call_tool("tool_react_decide", {
+        "messages_json": json.dumps(messages),
+        "tools_json": json.dumps(tools)
+    })
+    return result
 
 def _header(title: str) -> None:
     print()

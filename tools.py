@@ -135,7 +135,7 @@ Classify urgency as: high, medium, or low.
 
 Reply with the urgency word first, then a brief explanation.
 Suggest 1-3 doctor specialties suited to these symptoms.""",
-        patient_context=patient_context,
+        patient_context,
     )
 
     lower = raw.lower()
@@ -166,7 +166,7 @@ Urgency: {urgency}
 
 Give 3 things the patient can do RIGHT NOW to feel better.
 One sentence each. No bullet points.""",
-        patient_context=patient_context,
+        patient_context,
     )
     return {"advice": advice}
 
