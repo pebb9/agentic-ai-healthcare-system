@@ -8,6 +8,8 @@ import time
 
 from mcp.server.fastmcp import FastMCP
 
+from llm.llm_27b_text_it import ask_medgemma_react as _ask_medgemma_react
+
 from tools import (
     assess_symptoms,
     get_advice,
@@ -22,6 +24,19 @@ from tools import (
 from mcp_logger import log_tool_call, log_tool_result
 
 mcp = FastMCP("healthagent", host="127.0.0.1", port=8000)
+
+
+# ── Tool 0: react_decide ───────────────────────────────────────────────────
+# ReAct brain (called by agent.py instead of importing llm directly)
+@mcp.tool()
+async def tool_react_decide(
+    messages_json: str,     # conversation history
+    tools_json: str     # available tools
+) -> str:
+    messages = json.loads(messages_json)
+    tools = json.loads(tools_json)
+    decision = await _ask_medgemma_react(messages, tools)
+    return json.dumps(decision)
 
 
 # ── Tool 1: assess_symptoms ───────────────────────────────────────────────────
@@ -249,6 +264,8 @@ def tool_get_medical_records(patient_id: str) -> str:
             error=str(exc),
         )
         raise
+
+
 
 
 # ── Entry point ───────────────────────────────────────────────────────────────
