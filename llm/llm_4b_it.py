@@ -28,12 +28,14 @@ def _load_model():
             MEDGEMMA_MODEL,
             use_fast="False"    # uses slower processor to achieve better results
         )
+        _model.generation_config.pad_token_id = _processor.eos_token_id     # silences the warning
+
         _model.eval()
 
         print("\nModel ready to receive user symptoms.\n\n")
 
 
-async def ask_medgemma(sys_prompt: str, patient_prompt: str = "") -> str:
+async def ask_medgemma(prompt: str, patient_context: str = "") -> str:
     """
     Send a prompt to MedGemma agent and return the response text.
 
@@ -45,11 +47,11 @@ async def ask_medgemma(sys_prompt: str, patient_prompt: str = "") -> str:
     messages = [
         {
             "role": "system",
-            "content": sys_prompt
+            "content": prompt
         },
         {
             "role": "user",
-            "content": patient_prompt
+            "content": patient_context
         }
     ]
 
@@ -60,15 +62,16 @@ async def ask_medgemma(sys_prompt: str, patient_prompt: str = "") -> str:
             tokenize=True,
             return_dict=True,
             return_tensors="pt"
-        ).to(_model.device, dtype=torch.bfloat16)
+        ).to(_model.device)
 
         input_len = inputs["input_ids"].shape[-1]
 
         with torch.inference_mode():
             generation = _model.generate(
                 **inputs,
-                max_new_tokens=512,
-                do_sample=False
+                max_new_tokens=256,
+                do_sample=True,
+                temperature=0.3
             )
             generation = generation[0][input_len:]
         

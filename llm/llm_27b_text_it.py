@@ -72,7 +72,7 @@ async def ask_medgemma(prompt: str, patient_context: str = "") -> str:
         with torch.inference_mode():
             generation = _model.generate(
                 **inputs,
-                max_new_tokens=128,  # lower because of chatbot-style
+                max_new_tokens=256,  # lower because of chatbot-style
                 do_sample=True,
                 temperature=0.3
             )
