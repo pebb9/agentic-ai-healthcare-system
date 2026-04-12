@@ -47,12 +47,19 @@ async def main():
         print("No attacks matched. Available:", list(ATTACKS.keys()))
         return
 
-    print("  Loading model...")
-    await call_tool("tool_react_decide", {
-        "messages_json": json.dumps([{"role": "user", "content": "hello"}]),
-        "tools_json":    json.dumps([]),
-    })
-    print("  Model ready.\n")
+    # Warm up — wait until server is ready
+    print("  Waiting for MCP server...")
+    while True:
+        try:
+            await call_tool("tool_react_decide", {
+                "messages_json": json.dumps([{"role": "user", "content": "hello"}]),
+                "tools_json":    json.dumps([]),
+            })
+            print("  Model ready.\n")
+            break
+        except Exception:
+            print("  Server not ready yet, retrying in 10s...")
+            await asyncio.sleep(10)
 
     results = await run_evaluation(behaviors=behaviors, attacks=attacks)
 
