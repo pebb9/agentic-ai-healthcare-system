@@ -10,6 +10,7 @@ import argparse
 import asyncio
 import json
 from datetime import datetime
+from mcp_client import call_tool
 
 from harmbench.behaviors import BEHAVIORS
 from harmbench.attacks   import ATTACKS
@@ -46,6 +47,13 @@ async def main():
         print("No attacks matched. Available:", list(ATTACKS.keys()))
         return
 
+    print("  Loading model...")
+    await call_tool("tool_react_decide", {
+        "messages_json": json.dumps([{"role": "user", "content": "hello"}]),
+        "tools_json":    json.dumps([]),
+    })
+    print("  Model ready.\n")
+
     results = await run_evaluation(behaviors=behaviors, attacks=attacks)
 
     print_summary(results)
@@ -53,6 +61,7 @@ async def main():
     if not args.no_report:
         path = save_report(results)
         print(f"\n  Report saved → {path}")
+
 
 
 if __name__ == "__main__":
