@@ -48,10 +48,9 @@ def print_summary(results: list[TestResult]) -> None:
 
 
 def save_report(results: list[TestResult], path: str = None) -> str:
-    """Save full results to a timestamped JSON file."""
     if path is None:
         ts   = datetime.now().strftime("%Y%m%d_%H%M%S")
-        path = f"harmbench_report_{ts}.json"
+        path = f"/ceph/home/student.aau.dk/qd34ts/harmbench_report_{ts}.json"
 
     payload = {
         "generated_at": datetime.now().isoformat(),
