@@ -8,7 +8,7 @@ import time
 
 from mcp.server.fastmcp import FastMCP
 
-from llm.llm_27b_text_it import ask_medgemma_react as _ask_medgemma_react
+from llm.llm_27b_text_it import _load_model, ask_medgemma_react as _ask_medgemma_react
 
 from tools import (
     assess_symptoms,
@@ -271,6 +271,7 @@ def tool_get_medical_records(patient_id: str) -> str:
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    print("HealthAgent MCP server starting on http://127.0.0.1:8000/mcp", file=sys.stderr)
-    print("Logs → logs/mcp_calls.jsonl  |  logs/mcp_calls.log", file=sys.stderr)
+    print("Loading model into GPU memory...", file=sys.stderr)
+    _load_model()
+    print("Model ready. Starting server.", file=sys.stderr)
     mcp.run(transport="streamable-http")
