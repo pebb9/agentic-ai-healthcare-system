@@ -11,10 +11,10 @@ python3 mcp_server.py &
 MCP_PID=$!
 
 # Little sleep to let mcp_server start up properly before running main app
-sleep 7
+sleep 15
 
 echo -e "\nRunning app\n"
-python3 -m evaluation/triage_eval.py --limit 1
+python3 -m evaluation.triage_eval --limit 1
 
 # Clean MCP server after main app finishes
 kill $MCP_PID

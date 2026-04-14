@@ -15,7 +15,7 @@ import pandas as pd
 from mcp_client import call_tool
 
 
-DEFAULT_DATASET = "data/healthcare_with_triage.csv"
+DEFAULT_DATASET = "healthcare_with_triage.csv"
 DEFAULT_OUTPUT = "evaluation/results/triage_results.csv"
 
 
@@ -142,6 +142,7 @@ async def query_agent(row: pd.Series) -> dict:
             "tools_json": json.dumps([]),
         },
     )
+    print("RAW MCP RESPONSE:", raw_response)
 
     if not isinstance(raw_response, str):
         raw_response = str(raw_response)
