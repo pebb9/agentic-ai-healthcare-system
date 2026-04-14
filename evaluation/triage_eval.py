@@ -128,6 +128,57 @@ def extract_prediction_from_text(text: str) -> dict:
         "reason": text,
     }
 
+def extract_prediction_from_assessment_tool(tool_result: str) -> dict:
+    """
+    Parse tool_assess_symptoms result and extract benchmark fields.
+    Expected shape is a JSON string like:
+    {
+        "urgency": "high",
+        "doctors": [...],
+        "raw_llm_response": "..."
+    }
+    """
+    if not tool_result:
+        return {
+            "predicted_disease": None,
+            "predicted_triage": None,
+            "reason": "Empty tool result",
+        }
+
+    parsed = None
+
+    try:
+        parsed = json.loads(tool_result)
+    except Exception:
+        try:
+            parsed = ast.literal_eval(tool_result)
+        except Exception:
+            return {
+                "predicted_disease": None,
+                "predicted_triage": None,
+                "reason": f"Could not parse tool_assess_symptoms result: {tool_result}",
+            }
+
+    urgency = str(parsed.get("urgency", "")).strip().upper()
+    if urgency == "HIGH":
+        triage = "HIGH"
+    elif urgency == "MEDIUM":
+        triage = "MEDIUM"
+    elif urgency == "LOW":
+        triage = "LOW"
+    else:
+        triage = None
+
+    raw_text = parsed.get("raw_llm_response", "") or ""
+
+    extracted = extract_prediction_from_text(raw_text)
+
+    return {
+        "predicted_disease": extracted.get("predicted_disease"),
+        "predicted_triage": triage,
+        "reason": raw_text if raw_text else str(parsed),
+    }
+
 def parse_agent_response(raw_response: str) -> dict:
     """
     Parse MCP responses that may be:
@@ -274,7 +325,17 @@ async def query_agent(row: pd.Series) -> dict:
 
             print(f"TOOL RESULT {tool_name}:", tool_result)
 
-            # Feed the tool result back into the conversation so the agent can continue reasoning
+            # Benchmark stop-point: use tool_assess_symptoms as the medical assessment output
+            if tool_name == "tool_assess_symptoms":
+                extracted = extract_prediction_from_assessment_tool(tool_result)
+                return {
+                    "predicted_disease": extracted.get("predicted_disease"),
+                    "predicted_triage": extracted.get("predicted_triage"),
+                    "reason": extracted.get("reason"),
+                    "raw_response": tool_result,
+                }
+
+            # For any other tool, keep looping
             messages.append({"role": "assistant", "content": raw_response})
             messages.append(
                 {
