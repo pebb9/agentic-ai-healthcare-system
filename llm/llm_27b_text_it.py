@@ -1,4 +1,5 @@
 import json
+from pyexpat.errors import messages
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from threading import Lock
@@ -101,9 +102,19 @@ async def ask_medgemma_react(messages: list[dict], tools: list[dict]) -> dict:
 
     history_text = ""
     for msg in messages:
-        role    = msg["role"].upper()
+        role = msg["role"].lower()
         content = msg["content"]
-        history_text += f"\n[{role}]: {content}"
+
+        if role == "user":
+            role_label = "PATIENT"
+        elif role == "assistant":
+            role_label = "ASSISTANT"
+        elif role == "tool":
+            role_label = "TOOL"
+        else:
+            role_label = role.upper()
+
+        history_text += f"\n[{role_label}]: {content}"
 
     decision_prompt = f"""You are a medical appointment agent. Help patients book or cancel appointments by reasoning step by step and calling tools. If you are unsure of what the patient wants and the input is not clear, ask questions to get it clear.
 
