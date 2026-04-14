@@ -9,7 +9,6 @@ import argparse
 import asyncio
 import json
 import ast
-from pathlib import Path
 
 import pandas as pd
 
@@ -19,6 +18,37 @@ from mcp_client import call_tool
 DEFAULT_DATASET = "healthcare_with_triage.csv"
 DEFAULT_OUTPUT = "evaluation/results/triage_results.csv"
 
+def get_available_tools():
+    return [
+        {
+            "name": "tool_assess_symptoms",
+            "description": "Assess patient symptoms and return likely condition, urgency, and doctor specialty."
+        },
+        {
+            "name": "tool_get_advice",
+            "description": "Provide self-care advice based on symptoms and urgency."
+        },
+        {
+            "name": "tool_get_slots",
+            "description": "Get appointment slots for a doctor and urgency."
+        },
+        {
+            "name": "tool_book_slot",
+            "description": "Book an appointment slot for a patient."
+        },
+        {
+            "name": "tool_cancel_appointment",
+            "description": "Cancel an existing appointment."
+        },
+        {
+            "name": "tool_get_appointment_history",
+            "description": "Retrieve appointment history for a patient."
+        },
+        {
+            "name": "tool_get_medical_records",
+            "description": "Retrieve a patient's medical records."
+        },
+    ]
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Run triage benchmark against the health agent")
@@ -29,32 +59,17 @@ def parse_args():
     return parser.parse_args()
 
 
-def build_prompt(row: pd.Series) -> str:
-    return (
-        "You are evaluating a healthcare triage system.\n"
-        "Given the patient data below, identify the most likely disease and assign a triage level.\n\n"
-        f"Age: {row['Age']}\n"
-        f"Gender: {row['Gender']}\n"
-        f"Symptoms: {row['Symptoms']}\n"
-        f"Symptom_Count: {row['Symptom_Count']}\n\n"
-        "Return valid JSON only with exactly these keys:\n"
-        '{'
-        '"predicted_disease": "<disease name>", '
-        '"predicted_triage": "LOW|MEDIUM|HIGH", '
-        '"reason": "<short explanation>"'
-        '}'
-    )
-
-
 async def warmup():
     print("Waiting for MCP server...")
+    tools = get_available_tools()
+
     while True:
         try:
             await call_tool(
                 "tool_react_decide",
                 {
                     "messages_json": json.dumps([{"role": "user", "content": "hello"}]),
-                    "tools_json": json.dumps([]),
+                    "tools_json": json.dumps(tools),
                 },
             )
             print("Model ready.\n")
@@ -71,6 +86,47 @@ def normalize_triage(value):
     value = str(value).strip().upper()
     return value if value in {"LOW", "MEDIUM", "HIGH"} else None
 
+def extract_prediction_from_text(text: str) -> dict:
+    """
+    Best-effort extraction from final natural-language response.
+    """
+    if not text:
+        return {
+            "predicted_disease": None,
+            "predicted_triage": None,
+            "reason": "Empty final response",
+        }
+
+    triage = None
+    upper_text = text.upper()
+    for level in ["HIGH", "MEDIUM", "LOW"]:
+        if level in upper_text:
+            triage = level
+            break
+
+    diseases = [
+        "Common Cold", "Influenza", "COVID-19", "Pneumonia", "Tuberculosis",
+        "Diabetes", "Hypertension", "Asthma", "Heart Disease",
+        "Chronic Kidney Disease", "Gastritis", "Food Poisoning",
+        "Irritable Bowel Syndrome (IBS)", "Liver Disease", "Ulcer",
+        "Migraine", "Epilepsy", "Stroke", "Dementia", "Parkinson’s Disease",
+        "Parkinson's Disease", "Allergy", "Arthritis", "Anemia",
+        "Thyroid Disorder", "Obesity", "Depression", "Anxiety",
+        "Dermatitis", "Sinusitis", "Bronchitis"
+    ]
+
+    predicted_disease = None
+    lower_text = text.lower()
+    for disease in diseases:
+        if disease.lower() in lower_text:
+            predicted_disease = disease
+            break
+
+    return {
+        "predicted_disease": predicted_disease,
+        "predicted_triage": triage,
+        "reason": text,
+    }
 
 def parse_agent_response(raw_response: str) -> dict:
     """
@@ -82,6 +138,8 @@ def parse_agent_response(raw_response: str) -> dict:
         return {
             "action": None,
             "message": None,
+            "tool": None,
+            "args": None,
             "predicted_disease": None,
             "predicted_triage": None,
             "reason": "Empty response",
@@ -102,6 +160,8 @@ def parse_agent_response(raw_response: str) -> dict:
             return {
                 "action": None,
                 "message": None,
+                "tool": None,
+                "args": None,
                 "predicted_disease": None,
                 "predicted_triage": None,
                 "reason": f"Could not parse MCP JSON/Python dict: {exc}",
@@ -112,148 +172,153 @@ def parse_agent_response(raw_response: str) -> dict:
         return {
             "action": None,
             "message": None,
+            "tool": None,
+            "args": None,
             "predicted_disease": None,
             "predicted_triage": None,
             "reason": f"Unexpected response format: {type(outer).__name__}",
             "raw_response": raw_response,
         }
 
-    if outer.get("action") == "ask_user":
-        return {
-            "action": "ask_user",
-            "message": outer.get("message"),
-            "predicted_disease": None,
-            "predicted_triage": None,
-            "reason": None,
-            "raw_response": raw_response,
-        }
-
-    if "predicted_disease" in outer or "predicted_triage" in outer:
-        return {
-            "action": outer.get("action"),
-            "message": outer.get("message"),
-            "predicted_disease": outer.get("predicted_disease"),
-            "predicted_triage": normalize_triage(outer.get("predicted_triage")),
-            "reason": outer.get("reason"),
-            "raw_response": raw_response,
-        }
-
-    for field in ["content", "answer", "final", "final_answer", "output", "text", "message"]:
-        value = outer.get(field)
-        if isinstance(value, str):
-            for parser in (json.loads, ast.literal_eval):
-                try:
-                    inner = parser(value)
-                    if isinstance(inner, dict):
-                        return {
-                            "action": inner.get("action"),
-                            "message": inner.get("message"),
-                            "predicted_disease": inner.get("predicted_disease"),
-                            "predicted_triage": normalize_triage(inner.get("predicted_triage")),
-                            "reason": inner.get("reason"),
-                            "raw_response": raw_response,
-                        }
-                except Exception:
-                    continue
-
     return {
         "action": outer.get("action"),
         "message": outer.get("message"),
-        "predicted_disease": None,
-        "predicted_triage": None,
-        "reason": f"Parsed MCP response but no prediction fields found: {outer}",
+        "tool": outer.get("tool"),
+        "args": outer.get("args"),
+        "predicted_disease": outer.get("predicted_disease"),
+        "predicted_triage": normalize_triage(outer.get("predicted_triage")),
+        "reason": outer.get("reason"),
         "raw_response": raw_response,
     }
-
-    # Case 2: ReAct output wraps final answer in a field like content / answer / final
-    candidate_fields = ["content", "answer", "final", "final_answer", "output", "text"]
-    if isinstance(outer, dict):
-        for field in candidate_fields:
-            value = outer.get(field)
-            if isinstance(value, str):
-                try:
-                    inner = json.loads(value)
-                    if isinstance(inner, dict):
-                        return {
-                            "predicted_disease": inner.get("predicted_disease"),
-                            "predicted_triage": normalize_triage(inner.get("predicted_triage")),
-                            "reason": inner.get("reason"),
-                            "raw_response": raw_response,
-                        }
-                except Exception:
-                    continue
-
-    # Case 3: fallback
-    return {
-        "predicted_disease": None,
-        "predicted_triage": None,
-        "reason": f"Unexpected response format: {type(outer).__name__}",
-        "raw_response": raw_response,
-    }
-
 
 async def query_agent(row: pd.Series) -> dict:
+    
     """
-    Two-turn flow:
-    1. Start the normal conversation
-    2. If the agent asks for symptoms, provide the dataset symptoms
+    Run a small ReAct loop against the MCP agent until it returns a final response.
+
+    Flow:
+    1. Start conversation
+    2. If agent asks user, answer with dataset symptoms
+    3. If agent calls a tool, execute it and append tool result
+    4. Repeat until agent responds or max turns reached
     """
+    tools = get_available_tools()
     messages = [
-        {
-            "role": "user",
-            "content": "Hi, I need help with a health issue."
-        }
+        {"role": "user", "content": "Hi, I need help with a health issue."}
     ]
 
-    raw_response = await call_tool(
-        "tool_react_decide",
-        {
-            "messages_json": json.dumps(messages),
-            "tools_json": json.dumps([]),
-        },
-    )
+    max_turns = 8
+    symptoms_sent = False
 
-    if not isinstance(raw_response, str):
-        raw_response = str(raw_response)
-
-    print("RAW MCP RESPONSE TURN 1:", raw_response)
-    parsed = parse_agent_response(raw_response)
-
-    if parsed.get("action") == "ask_user":
-        symptom_message = (
-            f"I am {row['Age']} years old, {row['Gender']}, "
-            f"and I have these symptoms: {row['Symptoms']}. "
-            "Please triage me as LOW, MEDIUM, or HIGH and tell me the most likely disease."
-        )
-
-        messages.append(
-            {
-                "role": "assistant",
-                "content": parsed.get("message", "")
-            }
-        )
-        messages.append(
-            {
-                "role": "user",
-                "content": symptom_message
-            }
-        )
-
+    for turn in range(1, max_turns + 1):
         raw_response = await call_tool(
             "tool_react_decide",
             {
                 "messages_json": json.dumps(messages),
-                "tools_json": json.dumps([]),
+                "tools_json": json.dumps(tools),
             },
         )
 
         if not isinstance(raw_response, str):
             raw_response = str(raw_response)
 
-        print("RAW MCP RESPONSE TURN 2:", raw_response)
+        print(f"RAW MCP RESPONSE TURN {turn}:", raw_response)
         parsed = parse_agent_response(raw_response)
 
-    return parsed
+        action = parsed.get("action")
+
+        if action == "ask_user":
+            agent_message = parsed.get("message", "")
+            messages.append({"role": "assistant", "content": agent_message})
+
+            if not symptoms_sent:
+                user_reply = (
+                    f"I am {row['Age']} years old, {row['Gender']}, "
+                    f"and I have these symptoms: {row['Symptoms']}."
+                )
+                symptoms_sent = True
+            else:
+                # If the agent keeps asking questions, answer conservatively once.
+                user_reply = (
+                    "Based on my current symptoms, please continue with your assessment "
+                    "and tell me the most likely disease and triage level."
+                )
+
+            messages.append({"role": "user", "content": user_reply})
+            continue
+
+        if action == "call_tool":
+            tool_name = parsed.get("tool")
+            tool_args = parsed.get("args") or {}
+
+            if not tool_name:
+                return {
+                    "predicted_disease": None,
+                    "predicted_triage": None,
+                    "reason": "Agent requested tool call without tool name",
+                    "raw_response": raw_response,
+                }
+
+            try:
+                tool_result = await call_tool(tool_name, tool_args)
+            except Exception as exc:
+                return {
+                    "predicted_disease": None,
+                    "predicted_triage": None,
+                    "reason": f"Tool call failed: {tool_name} -> {exc}",
+                    "raw_response": raw_response,
+                }
+
+            if not isinstance(tool_result, str):
+                tool_result = str(tool_result)
+
+            print(f"TOOL RESULT {tool_name}:", tool_result)
+
+            # Feed the tool result back into the conversation so the agent can continue reasoning
+            messages.append({"role": "assistant", "content": raw_response})
+            messages.append(
+                {
+                    "role": "tool",
+                    "content": f"{tool_name} returned: {tool_result}",
+                }
+            )
+            continue
+
+        if action == "respond":
+            final_message = parsed.get("message", "")
+
+            # Try to extract structured prediction from the final message
+            extracted = extract_prediction_from_text(final_message)
+
+            return {
+                "predicted_disease": extracted.get("predicted_disease"),
+                "predicted_triage": extracted.get("predicted_triage"),
+                "reason": extracted.get("reason") or final_message,
+                "raw_response": raw_response,
+            }
+
+        # Direct prediction shape fallback
+        if parsed.get("predicted_disease") is not None or parsed.get("predicted_triage") is not None:
+            return {
+                "predicted_disease": parsed.get("predicted_disease"),
+                "predicted_triage": parsed.get("predicted_triage"),
+                "reason": parsed.get("reason"),
+                "raw_response": raw_response,
+            }
+
+        return {
+            "predicted_disease": None,
+            "predicted_triage": None,
+            "reason": f"Unhandled agent response: {parsed}",
+            "raw_response": raw_response,
+        }
+
+    return {
+        "predicted_disease": None,
+        "predicted_triage": None,
+        "reason": f"Max turns reached without final respond after {max_turns} turns",
+        "raw_response": "",
+    }
 
 
 def compute_metrics(df: pd.DataFrame):
