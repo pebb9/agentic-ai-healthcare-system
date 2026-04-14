@@ -14,7 +14,7 @@ MCP_PID=$!
 sleep 15
 
 echo -e "\nRunning app\n"
-python3 -m evaluation.triage_eval --limit 1
+python3 -m evaluation.triage_eval --limit 5
 
 # Clean MCP server after main app finishes
 kill $MCP_PID

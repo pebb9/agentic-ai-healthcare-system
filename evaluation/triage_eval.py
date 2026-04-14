@@ -8,6 +8,7 @@ if str(ROOT_DIR) not in sys.path:
 import argparse
 import asyncio
 import json
+import ast
 from pathlib import Path
 
 import pandas as pd
@@ -73,37 +74,96 @@ def normalize_triage(value):
 
 def parse_agent_response(raw_response: str) -> dict:
     """
-    MCP server returns json.dumps(decision), so raw_response should be a JSON string.
-    We parse that first, then try to extract predicted_disease / predicted_triage / reason.
+    Parse MCP responses that may be:
+    - valid JSON
+    - Python dict strings using single quotes
     """
     if not raw_response:
         return {
+            "action": None,
+            "message": None,
             "predicted_disease": None,
             "predicted_triage": None,
             "reason": "Empty response",
             "raw_response": raw_response,
         }
 
+    outer = None
+
     try:
         outer = json.loads(raw_response)
-    except Exception as exc:
+    except Exception:
+        pass
+
+    if outer is None:
+        try:
+            outer = ast.literal_eval(raw_response)
+        except Exception as exc:
+            return {
+                "action": None,
+                "message": None,
+                "predicted_disease": None,
+                "predicted_triage": None,
+                "reason": f"Could not parse MCP JSON/Python dict: {exc}",
+                "raw_response": raw_response,
+            }
+
+    if not isinstance(outer, dict):
         return {
+            "action": None,
+            "message": None,
             "predicted_disease": None,
             "predicted_triage": None,
-            "reason": f"Could not parse MCP JSON: {exc}",
+            "reason": f"Unexpected response format: {type(outer).__name__}",
             "raw_response": raw_response,
         }
 
-    # Case 1: model already returned the desired dict directly
-    if isinstance(outer, dict) and (
-        "predicted_disease" in outer or "predicted_triage" in outer
-    ):
+    if outer.get("action") == "ask_user":
         return {
+            "action": "ask_user",
+            "message": outer.get("message"),
+            "predicted_disease": None,
+            "predicted_triage": None,
+            "reason": None,
+            "raw_response": raw_response,
+        }
+
+    if "predicted_disease" in outer or "predicted_triage" in outer:
+        return {
+            "action": outer.get("action"),
+            "message": outer.get("message"),
             "predicted_disease": outer.get("predicted_disease"),
             "predicted_triage": normalize_triage(outer.get("predicted_triage")),
             "reason": outer.get("reason"),
             "raw_response": raw_response,
         }
+
+    for field in ["content", "answer", "final", "final_answer", "output", "text", "message"]:
+        value = outer.get(field)
+        if isinstance(value, str):
+            for parser in (json.loads, ast.literal_eval):
+                try:
+                    inner = parser(value)
+                    if isinstance(inner, dict):
+                        return {
+                            "action": inner.get("action"),
+                            "message": inner.get("message"),
+                            "predicted_disease": inner.get("predicted_disease"),
+                            "predicted_triage": normalize_triage(inner.get("predicted_triage")),
+                            "reason": inner.get("reason"),
+                            "raw_response": raw_response,
+                        }
+                except Exception:
+                    continue
+
+    return {
+        "action": outer.get("action"),
+        "message": outer.get("message"),
+        "predicted_disease": None,
+        "predicted_triage": None,
+        "reason": f"Parsed MCP response but no prediction fields found: {outer}",
+        "raw_response": raw_response,
+    }
 
     # Case 2: ReAct output wraps final answer in a field like content / answer / final
     candidate_fields = ["content", "answer", "final", "final_answer", "output", "text"]
@@ -133,7 +193,17 @@ def parse_agent_response(raw_response: str) -> dict:
 
 
 async def query_agent(row: pd.Series) -> dict:
-    messages = [{"role": "user", "content": build_prompt(row)}]
+    """
+    Two-turn flow:
+    1. Start the normal conversation
+    2. If the agent asks for symptoms, provide the dataset symptoms
+    """
+    messages = [
+        {
+            "role": "user",
+            "content": "Hi, I need help with a health issue."
+        }
+    ]
 
     raw_response = await call_tool(
         "tool_react_decide",
@@ -142,12 +212,48 @@ async def query_agent(row: pd.Series) -> dict:
             "tools_json": json.dumps([]),
         },
     )
-    print("RAW MCP RESPONSE:", raw_response)
 
     if not isinstance(raw_response, str):
         raw_response = str(raw_response)
 
-    return parse_agent_response(raw_response)
+    print("RAW MCP RESPONSE TURN 1:", raw_response)
+    parsed = parse_agent_response(raw_response)
+
+    if parsed.get("action") == "ask_user":
+        symptom_message = (
+            f"I am {row['Age']} years old, {row['Gender']}, "
+            f"and I have these symptoms: {row['Symptoms']}. "
+            "Please triage me as LOW, MEDIUM, or HIGH and tell me the most likely disease."
+        )
+
+        messages.append(
+            {
+                "role": "assistant",
+                "content": parsed.get("message", "")
+            }
+        )
+        messages.append(
+            {
+                "role": "user",
+                "content": symptom_message
+            }
+        )
+
+        raw_response = await call_tool(
+            "tool_react_decide",
+            {
+                "messages_json": json.dumps(messages),
+                "tools_json": json.dumps([]),
+            },
+        )
+
+        if not isinstance(raw_response, str):
+            raw_response = str(raw_response)
+
+        print("RAW MCP RESPONSE TURN 2:", raw_response)
+        parsed = parse_agent_response(raw_response)
+
+    return parsed
 
 
 def compute_metrics(df: pd.DataFrame):
