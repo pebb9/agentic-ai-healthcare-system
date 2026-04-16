@@ -1,0 +1,795 @@
+Job starting...
+
+Installing python requirements
+
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: torch in /usr/local/lib/python3.12/dist-packages (from -r requirements.txt (line 1)) (2.11.0a0+eb65b36914.nv26.2)
+Requirement already satisfied: transformers in /ceph/home/student.aau.dk/cm51du/.local/lib/python3.12/site-packages (from -r requirements.txt (line 2)) (5.3.0)
+Requirement already satisfied: accelerate in /ceph/home/student.aau.dk/cm51du/.local/lib/python3.12/site-packages (from -r requirements.txt (line 3)) (1.13.0)
+Requirement already satisfied: pillow in /usr/local/lib/python3.12/dist-packages (from -r requirements.txt (line 4)) (12.1.1)
+Requirement already satisfied: mcp in /ceph/home/student.aau.dk/cm51du/.local/lib/python3.12/site-packages (from -r requirements.txt (line 5)) (1.27.0)
+Requirement already satisfied: pandas in /usr/local/lib/python3.12/dist-packages (from -r requirements.txt (line 6)) (3.0.1)
+Requirement already satisfied: filelock in /usr/local/lib/python3.12/dist-packages (from torch->-r requirements.txt (line 1)) (3.24.2)
+Requirement already satisfied: typing-extensions>=4.10.0 in /usr/local/lib/python3.12/dist-packages (from torch->-r requirements.txt (line 1)) (4.15.0)
+Requirement already satisfied: setuptools in /usr/local/lib/python3.12/dist-packages (from torch->-r requirements.txt (line 1)) (81.0.0)
+Requirement already satisfied: sympy>=1.13.3 in /usr/local/lib/python3.12/dist-packages (from torch->-r requirements.txt (line 1)) (1.14.0)
+Requirement already satisfied: networkx>=2.5.1 in /usr/local/lib/python3.12/dist-packages (from torch->-r requirements.txt (line 1)) (3.6.1)
+Requirement already satisfied: jinja2 in /usr/local/lib/python3.12/dist-packages (from torch->-r requirements.txt (line 1)) (3.1.6)
+Requirement already satisfied: fsspec>=0.8.5 in /usr/local/lib/python3.12/dist-packages (from torch->-r requirements.txt (line 1)) (2025.10.0)
+Requirement already satisfied: huggingface-hub<2.0,>=1.3.0 in /usr/local/lib/python3.12/dist-packages (from transformers->-r requirements.txt (line 2)) (1.4.1)
+Requirement already satisfied: numpy>=1.17 in /usr/local/lib/python3.12/dist-packages (from transformers->-r requirements.txt (line 2)) (2.1.0)
+Requirement already satisfied: packaging>=20.0 in /usr/local/lib/python3.12/dist-packages (from transformers->-r requirements.txt (line 2)) (25.0)
+Requirement already satisfied: pyyaml>=5.1 in /usr/lib/python3/dist-packages (from transformers->-r requirements.txt (line 2)) (6.0.1)
+Requirement already satisfied: regex!=2019.12.17 in /usr/local/lib/python3.12/dist-packages (from transformers->-r requirements.txt (line 2)) (2026.1.15)
+Requirement already satisfied: tokenizers<=0.23.0,>=0.22.0 in /usr/local/lib/python3.12/dist-packages (from transformers->-r requirements.txt (line 2)) (0.22.2)
+Requirement already satisfied: typer in /usr/local/lib/python3.12/dist-packages (from transformers->-r requirements.txt (line 2)) (0.24.0)
+Requirement already satisfied: safetensors>=0.4.3 in /usr/local/lib/python3.12/dist-packages (from transformers->-r requirements.txt (line 2)) (0.7.0)
+Requirement already satisfied: tqdm>=4.27 in /usr/local/lib/python3.12/dist-packages (from transformers->-r requirements.txt (line 2)) (4.67.3)
+Requirement already satisfied: hf-xet<2.0.0,>=1.2.0 in /usr/local/lib/python3.12/dist-packages (from huggingface-hub<2.0,>=1.3.0->transformers->-r requirements.txt (line 2)) (1.2.0)
+Requirement already satisfied: httpx<1,>=0.23.0 in /usr/local/lib/python3.12/dist-packages (from huggingface-hub<2.0,>=1.3.0->transformers->-r requirements.txt (line 2)) (0.28.1)
+Requirement already satisfied: shellingham in /usr/local/lib/python3.12/dist-packages (from huggingface-hub<2.0,>=1.3.0->transformers->-r requirements.txt (line 2)) (1.5.4)
+Requirement already satisfied: typer-slim in /usr/local/lib/python3.12/dist-packages (from huggingface-hub<2.0,>=1.3.0->transformers->-r requirements.txt (line 2)) (0.24.0)
+Requirement already satisfied: anyio in /usr/local/lib/python3.12/dist-packages (from httpx<1,>=0.23.0->huggingface-hub<2.0,>=1.3.0->transformers->-r requirements.txt (line 2)) (4.12.1)
+Requirement already satisfied: certifi in /usr/local/lib/python3.12/dist-packages (from httpx<1,>=0.23.0->huggingface-hub<2.0,>=1.3.0->transformers->-r requirements.txt (line 2)) (2026.1.4)
+Requirement already satisfied: httpcore==1.* in /usr/local/lib/python3.12/dist-packages (from httpx<1,>=0.23.0->huggingface-hub<2.0,>=1.3.0->transformers->-r requirements.txt (line 2)) (1.0.9)
+Requirement already satisfied: idna in /usr/local/lib/python3.12/dist-packages (from httpx<1,>=0.23.0->huggingface-hub<2.0,>=1.3.0->transformers->-r requirements.txt (line 2)) (3.11)
+Requirement already satisfied: h11>=0.16 in /usr/local/lib/python3.12/dist-packages (from httpcore==1.*->httpx<1,>=0.23.0->huggingface-hub<2.0,>=1.3.0->transformers->-r requirements.txt (line 2)) (0.16.0)
+Requirement already satisfied: psutil in /usr/local/lib/python3.12/dist-packages (from accelerate->-r requirements.txt (line 3)) (7.2.2)
+Requirement already satisfied: httpx-sse>=0.4 in /ceph/home/student.aau.dk/cm51du/.local/lib/python3.12/site-packages (from mcp->-r requirements.txt (line 5)) (0.4.3)
+Requirement already satisfied: jsonschema>=4.20.0 in /usr/local/lib/python3.12/dist-packages (from mcp->-r requirements.txt (line 5)) (4.26.0)
+Requirement already satisfied: pydantic-settings>=2.5.2 in /ceph/home/student.aau.dk/cm51du/.local/lib/python3.12/site-packages (from mcp->-r requirements.txt (line 5)) (2.13.1)
+Requirement already satisfied: pydantic<3.0.0,>=2.11.0 in /usr/local/lib/python3.12/dist-packages (from mcp->-r requirements.txt (line 5)) (2.12.5)
+Requirement already satisfied: pyjwt>=2.10.1 in /ceph/home/student.aau.dk/cm51du/.local/lib/python3.12/site-packages (from pyjwt[crypto]>=2.10.1->mcp->-r requirements.txt (line 5)) (2.12.1)
+Requirement already satisfied: python-multipart>=0.0.9 in /ceph/home/student.aau.dk/cm51du/.local/lib/python3.12/site-packages (from mcp->-r requirements.txt (line 5)) (0.0.24)
+Requirement already satisfied: sse-starlette>=1.6.1 in /ceph/home/student.aau.dk/cm51du/.local/lib/python3.12/site-packages (from mcp->-r requirements.txt (line 5)) (3.3.4)
+Requirement already satisfied: starlette>=0.27 in /ceph/home/student.aau.dk/cm51du/.local/lib/python3.12/site-packages (from mcp->-r requirements.txt (line 5)) (1.0.0)
+Requirement already satisfied: typing-inspection>=0.4.1 in /usr/local/lib/python3.12/dist-packages (from mcp->-r requirements.txt (line 5)) (0.4.2)
+Requirement already satisfied: uvicorn>=0.31.1 in /ceph/home/student.aau.dk/cm51du/.local/lib/python3.12/site-packages (from mcp->-r requirements.txt (line 5)) (0.44.0)
+Requirement already satisfied: annotated-types>=0.6.0 in /usr/local/lib/python3.12/dist-packages (from pydantic<3.0.0,>=2.11.0->mcp->-r requirements.txt (line 5)) (0.7.0)
+Requirement already satisfied: pydantic-core==2.41.5 in /usr/local/lib/python3.12/dist-packages (from pydantic<3.0.0,>=2.11.0->mcp->-r requirements.txt (line 5)) (2.41.5)
+Requirement already satisfied: python-dateutil>=2.8.2 in /usr/local/lib/python3.12/dist-packages (from pandas->-r requirements.txt (line 6)) (2.9.0.post0)
+Requirement already satisfied: attrs>=22.2.0 in /usr/local/lib/python3.12/dist-packages (from jsonschema>=4.20.0->mcp->-r requirements.txt (line 5)) (25.4.0)
+Requirement already satisfied: jsonschema-specifications>=2023.03.6 in /usr/local/lib/python3.12/dist-packages (from jsonschema>=4.20.0->mcp->-r requirements.txt (line 5)) (2025.9.1)
+Requirement already satisfied: referencing>=0.28.4 in /usr/local/lib/python3.12/dist-packages (from jsonschema>=4.20.0->mcp->-r requirements.txt (line 5)) (0.37.0)
+Requirement already satisfied: rpds-py>=0.25.0 in /usr/local/lib/python3.12/dist-packages (from jsonschema>=4.20.0->mcp->-r requirements.txt (line 5)) (0.30.0)
+Requirement already satisfied: python-dotenv>=0.21.0 in /ceph/home/student.aau.dk/cm51du/.local/lib/python3.12/site-packages (from pydantic-settings>=2.5.2->mcp->-r requirements.txt (line 5)) (1.2.2)
+Requirement already satisfied: cryptography>=3.4.0 in /ceph/home/student.aau.dk/cm51du/.local/lib/python3.12/site-packages (from pyjwt[crypto]>=2.10.1->mcp->-r requirements.txt (line 5)) (46.0.7)
+Requirement already satisfied: cffi>=2.0.0 in /usr/local/lib/python3.12/dist-packages (from cryptography>=3.4.0->pyjwt[crypto]>=2.10.1->mcp->-r requirements.txt (line 5)) (2.0.0)
+Requirement already satisfied: pycparser in /usr/local/lib/python3.12/dist-packages (from cffi>=2.0.0->cryptography>=3.4.0->pyjwt[crypto]>=2.10.1->mcp->-r requirements.txt (line 5)) (3.0)
+Requirement already satisfied: six>=1.5 in /usr/local/lib/python3.12/dist-packages (from python-dateutil>=2.8.2->pandas->-r requirements.txt (line 6)) (1.16.0)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in /usr/local/lib/python3.12/dist-packages (from sympy>=1.13.3->torch->-r requirements.txt (line 1)) (1.3.0)
+Requirement already satisfied: click>=7.0 in /usr/local/lib/python3.12/dist-packages (from uvicorn>=0.31.1->mcp->-r requirements.txt (line 5)) (8.3.1)
+Requirement already satisfied: MarkupSafe>=2.0 in /usr/local/lib/python3.12/dist-packages (from jinja2->torch->-r requirements.txt (line 1)) (3.0.3)
+Requirement already satisfied: rich>=12.3.0 in /usr/local/lib/python3.12/dist-packages (from typer->transformers->-r requirements.txt (line 2)) (14.3.2)
+Requirement already satisfied: annotated-doc>=0.0.2 in /usr/local/lib/python3.12/dist-packages (from typer->transformers->-r requirements.txt (line 2)) (0.0.4)
+Requirement already satisfied: markdown-it-py>=2.2.0 in /usr/local/lib/python3.12/dist-packages (from rich>=12.3.0->typer->transformers->-r requirements.txt (line 2)) (4.0.0)
+Requirement already satisfied: pygments<3.0.0,>=2.13.0 in /usr/lib/python3/dist-packages (from rich>=12.3.0->typer->transformers->-r requirements.txt (line 2)) (2.17.2)
+Requirement already satisfied: mdurl~=0.1 in /usr/local/lib/python3.12/dist-packages (from markdown-it-py>=2.2.0->rich>=12.3.0->typer->transformers->-r requirements.txt (line 2)) (0.1.2)
+
+Starting MCP server
+
+
+Running triage evaluation
+
+
+Loading MedGemma model...
+
+
+Model ready to receive user symptoms.
+
+
+INFO:     127.0.0.1:59086 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59092 - "POST /mcp HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:59102 - "GET /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59118 - "POST /mcp HTTP/1.1" 200 OK
+
+
+[DEBUG] Patient context:
+
+[PATIENT]: hello
+
+
+
+
+[DEBUG] Input tokens: 860
+
+INFO:     127.0.0.1:40176 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40180 - "DELETE /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40182 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40198 - "POST /mcp HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:40206 - "GET /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40218 - "POST /mcp HTTP/1.1" 200 OK
+
+
+[DEBUG] Patient context:
+
+[PATIENT]: Hi, I need help with a health issue.
+
+
+
+
+[DEBUG] Input tokens: 869
+
+INFO:     127.0.0.1:40162 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40174 - "DELETE /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40184 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40188 - "POST /mcp HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:40196 - "GET /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40202 - "POST /mcp HTTP/1.1" 200 OK
+
+
+[DEBUG] Patient context:
+
+[PATIENT]: Hi, I need help with a health issue.
+[ASSISTANT]: I can help with that. Could you please tell me what symptoms you are experiencing right now?
+[PATIENT]: I am 29 years old, Male, and I have these symptoms: fever, back pain, shortness of breath.
+
+
+
+
+[DEBUG] Input tokens: 924
+
+INFO:     127.0.0.1:47496 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47502 - "DELETE /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47510 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47514 - "POST /mcp HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:47524 - "GET /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47538 - "POST /mcp HTTP/1.1" 200 OK
+  [MCP] assess_symptoms
+
+
+[DEBUG] Patient context:
+
+
+
+
+
+[DEBUG] Input tokens: 94
+
+INFO:     127.0.0.1:45174 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45186 - "DELETE /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45200 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45210 - "POST /mcp HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:45220 - "GET /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45224 - "POST /mcp HTTP/1.1" 200 OK
+
+
+[DEBUG] Patient context:
+
+[PATIENT]: Hi, I need help with a health issue.
+
+
+
+
+[DEBUG] Input tokens: 869
+
+INFO:     127.0.0.1:52844 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52854 - "DELETE /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52860 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52868 - "POST /mcp HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:52884 - "GET /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52890 - "POST /mcp HTTP/1.1" 200 OK
+
+
+[DEBUG] Patient context:
+
+[PATIENT]: Hi, I need help with a health issue.
+[ASSISTANT]: I can help with that. Could you please describe the symptoms you are experiencing right now?
+[PATIENT]: I am 76 years old, Female, and I have these symptoms: insomnia, back pain, weight loss.
+
+
+
+
+[DEBUG] Input tokens: 922
+
+INFO:     127.0.0.1:40398 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40410 - "DELETE /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40418 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40422 - "POST /mcp HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:40426 - "GET /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40428 - "POST /mcp HTTP/1.1" 200 OK
+  [MCP] assess_symptoms
+
+
+[DEBUG] Patient context:
+
+
+
+
+
+[DEBUG] Input tokens: 93
+
+INFO:     127.0.0.1:36414 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36416 - "DELETE /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36420 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36426 - "POST /mcp HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:36434 - "GET /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36444 - "POST /mcp HTTP/1.1" 200 OK
+
+
+[DEBUG] Patient context:
+
+[PATIENT]: Hi, I need help with a health issue.
+
+
+
+
+[DEBUG] Input tokens: 869
+
+INFO:     127.0.0.1:48388 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48390 - "DELETE /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48400 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48410 - "POST /mcp HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:48424 - "GET /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48426 - "POST /mcp HTTP/1.1" 200 OK
+
+
+[DEBUG] Patient context:
+
+[PATIENT]: Hi, I need help with a health issue.
+[ASSISTANT]: I can help with that. Could you please describe the symptoms you are experiencing right now?
+[PATIENT]: I am 78 years old, Male, and I have these symptoms: sore throat, vomiting, diarrhea.
+
+
+
+
+[DEBUG] Input tokens: 921
+
+INFO:     127.0.0.1:37506 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37508 - "DELETE /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37510 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37522 - "POST /mcp HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:37532 - "GET /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37546 - "POST /mcp HTTP/1.1" 200 OK
+  [MCP] assess_symptoms
+
+
+[DEBUG] Patient context:
+
+
+
+
+
+[DEBUG] Input tokens: 92
+
+INFO:     127.0.0.1:55760 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55768 - "DELETE /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55772 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55776 - "POST /mcp HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:55780 - "GET /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55790 - "POST /mcp HTTP/1.1" 200 OK
+
+
+[DEBUG] Patient context:
+
+[PATIENT]: Hi, I need help with a health issue.
+
+
+
+
+[DEBUG] Input tokens: 869
+
+INFO:     127.0.0.1:57776 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57778 - "DELETE /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57780 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57792 - "POST /mcp HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:57808 - "GET /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57822 - "POST /mcp HTTP/1.1" 200 OK
+
+
+[DEBUG] Patient context:
+
+[PATIENT]: Hi, I need help with a health issue.
+[ASSISTANT]: I can help with that. Could you please tell me what symptoms you are experiencing right now?
+[PATIENT]: I am 58 years old, Other, and I have these symptoms: blurred vision, depression, weight loss, muscle pain.
+
+
+
+
+[DEBUG] Input tokens: 926
+
+INFO:     127.0.0.1:34708 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34722 - "DELETE /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34728 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34736 - "POST /mcp HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:34746 - "GET /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34752 - "POST /mcp HTTP/1.1" 200 OK
+  [MCP] assess_symptoms
+
+
+[DEBUG] Patient context:
+
+
+
+
+
+[DEBUG] Input tokens: 95
+
+INFO:     127.0.0.1:37558 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37572 - "DELETE /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37578 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37586 - "POST /mcp HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:37590 - "GET /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37600 - "POST /mcp HTTP/1.1" 200 OK
+
+
+[DEBUG] Patient context:
+
+[PATIENT]: Hi, I need help with a health issue.
+
+
+
+
+[DEBUG] Input tokens: 869
+
+INFO:     127.0.0.1:47286 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47294 - "DELETE /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47310 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47318 - "POST /mcp HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:47324 - "GET /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47334 - "POST /mcp HTTP/1.1" 200 OK
+
+
+[DEBUG] Patient context:
+
+[PATIENT]: Hi, I need help with a health issue.
+[ASSISTANT]: I can help with that. Could you please describe the symptoms you are experiencing right now?
+[PATIENT]: I am 55 years old, Female, and I have these symptoms: swelling, appetite loss, nausea.
+
+
+
+
+[DEBUG] Input tokens: 921
+
+INFO:     127.0.0.1:47182 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47184 - "DELETE /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47200 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47216 - "POST /mcp HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:47232 - "GET /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47238 - "POST /mcp HTTP/1.1" 200 OK
+  [MCP] assess_symptoms
+
+
+[DEBUG] Patient context:
+
+
+
+
+
+[DEBUG] Input tokens: 92
+
+INFO:     127.0.0.1:54816 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54826 - "DELETE /mcp HTTP/1.1" 200 OK
+Waiting for MCP server...
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Server not ready yet: unhandled errors in a TaskGroup (1 sub-exception)
+Retrying in 5 seconds...
+
+Model ready.
+
+[1/5] Running case...
+RAW MCP RESPONSE TURN 1: {'action': 'ask_user', 'message': 'I can help with that. Could you please tell me what symptoms you are experiencing right now?'}
+RAW MCP RESPONSE TURN 2: {'action': 'call_tool', 'tool': 'tool_assess_symptoms', 'args': {'symptoms': 'fever, back pain, shortness of breath'}}
+TOOL RESULT tool_assess_symptoms: {'urgency': 'high', 'doctors': [{'id': 'DOC-001', 'name': 'Dr. Nikolaj Carstens', 'specialty': 'Cardiology'}, {'id': 'DOC-006', 'name': 'Dr. Elif Yildiz', 'specialty': 'Pulmonology'}, {'id': 'DOC-005', 'name': 'Dr. Argyris Fragkos', 'specialty': 'General Practice'}], 'raw_llm_response': 'High. Fever, back pain, and shortness of breath together can indicate serious conditions like pneumonia, kidney infection, or even a pulmonary embolism. These require immediate medical evaluation.\n\nSpecialties:\n1.  **Emergency Medicine:** For immediate assessment and stabilization.\n2.  **Internal Medicine:** For diagnosis and management of complex symptoms.\n3.  **Pulmonology:** If shortness of breath is the primary concern or if a lung issue is suspected.'}
+[2/5] Running case...
+RAW MCP RESPONSE TURN 1: {'action': 'ask_user', 'message': 'I can help with that. Could you please describe the symptoms you are experiencing right now?'}
+RAW MCP RESPONSE TURN 2: {'action': 'call_tool', 'tool': 'tool_assess_symptoms', 'args': {'symptoms': 'insomnia, back pain, weight loss'}}
+TOOL RESULT tool_assess_symptoms: {'urgency': 'medium', 'doctors': [{'id': 'DOC-004', 'name': 'Dr. Pablito Arias Champagne', 'specialty': 'Psychiatry'}, {'id': 'DOC-008', 'name': 'Dr. Amara Diallo', 'specialty': 'Endocrinology'}, {'id': 'DOC-007', 'name': 'Dr. Marco Bellini', 'specialty': 'Gastroenterology'}], 'raw_llm_response': "Medium. While these symptoms aren't immediately life-threatening, they significantly impact quality of life and could indicate underlying conditions that need evaluation. Insomnia and weight loss, especially together, warrant a timely medical assessment.\n\n**Doctor Specialties:**\n\n1.  **Primary Care Physician (PCP):** A good starting point to assess the overall picture and coordinate care.\n2.  **Internal Medicine:** Can investigate potential systemic causes for the symptoms.\n3.  **Neurology:** If the back pain is severe or accompanied by neurological symptoms (numbness, tingling, weakness), this specialty might be relevant."}
+[3/5] Running case...
+RAW MCP RESPONSE TURN 1: {'action': 'ask_user', 'message': 'I can help with that. Could you please describe the symptoms you are experiencing right now?'}
+RAW MCP RESPONSE TURN 2: {'action': 'call_tool', 'tool': 'tool_assess_symptoms', 'args': {'symptoms': 'sore throat, vomiting, diarrhea'}}
+TOOL RESULT tool_assess_symptoms: {'urgency': 'medium', 'doctors': [{'id': 'DOC-005', 'name': 'Dr. Argyris Fragkos', 'specialty': 'General Practice'}, {'id': 'DOC-007', 'name': 'Dr. Marco Bellini', 'specialty': 'Gastroenterology'}, {'id': 'DOC-013', 'name': 'Dr. Ingrid Svensson', 'specialty': 'ENT'}], 'raw_llm_response': "Medium. Sore throat, vomiting, and diarrhea can indicate a viral or bacterial infection (like gastroenteritis or strep throat) that often requires medical evaluation to rule out dehydration or more serious causes, but isn't typically an immediate emergency unless severe dehydration or other concerning signs are present.\n\nDoctor Specialties:\n1.  **Primary Care Physician (PCP) / Family Medicine:** Can diagnose and treat common infections.\n2.  **Internal Medicine:** Similar to PCP, focuses on adult illnesses.\n3.  **Pediatrician:** If the patient is a child."}
+[4/5] Running case...
+RAW MCP RESPONSE TURN 1: {'action': 'ask_user', 'message': 'I can help with that. Could you please tell me what symptoms you are experiencing right now?'}
+RAW MCP RESPONSE TURN 2: {'action': 'call_tool', 'tool': 'tool_assess_symptoms', 'args': {'symptoms': 'blurred vision, depression, weight loss, muscle pain'}}
+TOOL RESULT tool_assess_symptoms: {'urgency': 'medium', 'doctors': [{'id': 'DOC-002', 'name': 'Dr. Vu Nguyen', 'specialty': 'Neurology'}, {'id': 'DOC-004', 'name': 'Dr. Pablito Arias Champagne', 'specialty': 'Psychiatry'}, {'id': 'DOC-008', 'name': 'Dr. Amara Diallo', 'specialty': 'Endocrinology'}], 'raw_llm_response': '**Medium**\n\nBlurred vision, depression, weight loss, and muscle pain together warrant a medical evaluation relatively soon to determine the underlying cause. While not necessarily an immediate emergency, these symptoms could indicate a serious condition that needs timely diagnosis and treatment.\n\n**Suggested Specialties:**\n\n1.  **Primary Care Physician (PCP):** A good starting point to assess the overall picture and coordinate care.\n2.  **Endocrinologist:** To investigate potential hormonal imbalances (like thyroid issues) that could cause weight loss, muscle pain, and potentially affect vision or mood.\n3.  **Neurologist:** To evaluate the blurred vision and muscle pain, especially if neurological causes are suspected.'}
+[5/5] Running case...
+RAW MCP RESPONSE TURN 1: {'action': 'ask_user', 'message': 'I can help with that. Could you please describe the symptoms you are experiencing right now?'}
+RAW MCP RESPONSE TURN 2: {'action': 'call_tool', 'tool': 'tool_assess_symptoms', 'args': {'symptoms': 'swelling, appetite loss, nausea'}}
+TOOL RESULT tool_assess_symptoms: {'urgency': 'medium', 'doctors': [{'id': 'DOC-003', 'name': 'Dr. Henrik Flugstad', 'specialty': 'Dermatology'}, {'id': 'DOC-009', 'name': 'Dr. Sigrid Halvorsen', 'specialty': 'Rheumatology'}, {'id': 'DOC-012', 'name': 'Dr. Kwame Asante', 'specialty': 'Nephrology'}], 'raw_llm_response': "**Medium**\n\nSwelling, appetite loss, and nausea can indicate a variety of conditions, some potentially serious, but not always requiring immediate emergency care. It's important to get evaluated to determine the cause.\n\n**Specialties:**\n1.  **Internal Medicine:** Can assess a wide range of potential causes.\n2.  **Gastroenterology:** If nausea and appetite loss are prominent, this specialist focuses on digestive issues.\n3.  **Endocrinology:** Swelling can sometimes be related to hormonal or metabolic issues."}
+=== TRIAGE BENCHMARK SUMMARY ===
+Rows evaluated:     5
+Disease accuracy:   0.000
+Triage accuracy:    0.600
+HIGH recall:        0.333
+False HIGH rate:    0.000
+Unparsed rows:      0
+
+=== MISSED HIGH CASES (first 10) ===
+                                            Symptoms       Disease true_triage predicted_disease predicted_triage                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           reason
+blurred vision, depression, weight loss, muscle pain        Stroke        HIGH        Depression           MEDIUM **Medium**\n\nBlurred vision, depression, weight loss, and muscle pain together warrant a medical evaluation relatively soon to determine the underlying cause. While not necessarily an immediate emergency, these symptoms could indicate a serious condition that needs timely diagnosis and treatment.\n\n**Suggested Specialties:**\n\n1.  **Primary Care Physician (PCP):** A good starting point to assess the overall picture and coordinate care.\n2.  **Endocrinologist:** To investigate potential hormonal imbalances (like thyroid issues) that could cause weight loss, muscle pain, and potentially affect vision or mood.\n3.  **Neurologist:** To evaluate the blurred vision and muscle pain, especially if neurological causes are suspected.
+                     swelling, appetite loss, nausea Heart Disease        HIGH               NaN           MEDIUM                                                                                                                                                                                                                          **Medium**\n\nSwelling, appetite loss, and nausea can indicate a variety of conditions, some potentially serious, but not always requiring immediate emergency care. It's important to get evaluated to determine the cause.\n\n**Specialties:**\n1.  **Internal Medicine:** Can assess a wide range of potential causes.\n2.  **Gastroenterology:** If nausea and appetite loss are prominent, this specialist focuses on digestive issues.\n3.  **Endocrinology:** Swelling can sometimes be related to hormonal or metabolic issues.
+
+Saved results to: evaluation/results/triage_results.csv
