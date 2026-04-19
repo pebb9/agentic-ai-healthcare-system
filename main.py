@@ -12,7 +12,7 @@ from agent    import run_agent
 from database import init_db, get_patient, get_doctor
 from tools    import build_full_context
 from mcp_client import call_tool
-from validations import validate_patient_id, validate_symptoms, validate_advice, validate_booking
+from Validations import validate_patient_id, validate_symptoms, validate_advice, validate_booking
 
 
 
