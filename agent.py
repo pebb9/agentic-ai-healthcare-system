@@ -48,11 +48,6 @@ TOOLS = [
         "description": "View your past and upcoming appointments.",
         "args":        ["patient_id"],
     },
-    {
-        "name":        "tool_get_medical_records",
-        "description": "View your medical records and diagnoses.",
-        "args":        ["patient_id"],
-    }
 ]
 
 MAX_STEPS = 20  # Safety cap — prevents infinite loops
