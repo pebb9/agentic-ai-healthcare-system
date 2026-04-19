@@ -9,9 +9,8 @@
 import asyncio
 
 from agent    import run_agent
-from database import init_db, get_patient, get_doctor
+from database import init_db, get_patient
 from tools    import build_full_context
-from mcp_client import call_tool
 from Validations import validate_patient_id, validate_symptoms, validate_advice, validate_booking
 
 
@@ -19,17 +18,8 @@ from Validations import validate_patient_id, validate_symptoms, validate_advice,
 async def main() -> None:
     _banner()
     init_db()
-
-    print("Choose role:")
-    print("  1. Patient")
-    print("  2. Doctor")
-    role_choice = _prompt_int("\nEnter number: ", lo=1, hi=2)
-
-    print()
-    if role_choice == 1:
-        await patient_flow()
-    else:
-        await doctor_flow()
+    print("welcome!")
+    await patient_flow()
 
 
 # ── Patient flow ──────────────────────────────────────────────────────────────
@@ -83,67 +73,6 @@ async def patient_flow() -> None:
         ok, msg = validate_booking(result)
         print(msg if not ok else f"Booking confirmed: {result['booking_ref']}")
 
-
-# ── Doctor flow ───────────────────────────────────────────────────────────────
-
-async def doctor_flow() -> None:
-    print("Doctor login uses the DOCTOR id tied to the doctor account.")
-    print("Example: DOC-001")
-    doctor_id = input("Your Doctor ID: ").strip().upper()
-
-    if not doctor_id:
-        print("Doctor User ID is required.")
-        return
-
-    doctor = get_doctor(doctor_id)
-    if not doctor:
-        print(f"  [DB] Doctor account '{doctor_id}' not found.")
-        return
-
-    print(
-        f"\n  [DB] Found: {doctor['name']} | "
-        f"{doctor['specialty']} | doctor_id={doctor['id']}"
-    )
-
-    while True:
-        print()
-        print("Doctor menu:")
-        print("  1. View my appointments")
-        print("  2. Create medical record")
-        print("  3. Exit")
-
-        choice = _prompt_int("\nEnter number: ", lo=1, hi=3)
-
-        if choice == 1:
-            result = await call_tool("tool_doctor_get_my_appointments", {
-                "doctor_id": doctor_id,
-            })
-            _print_doctor_appointments(result)
-
-        elif choice == 2:
-            patient_id      = input("Patient ID: ").strip().upper()
-            symptoms        = input("Symptoms: ").strip()
-            symptom_count_r = input("Symptom count (optional): ").strip()
-            diagnosis       = input("Diagnosis (optional): ").strip()
-            appointment_id  = input("Appointment ID (optional): ").strip().upper()
-
-            symptom_count = int(symptom_count_r) if symptom_count_r.isdigit() else 0
-
-            result = await call_tool("tool_doctor_create_medical_record", {
-                "doctor_id":      doctor_id,
-                "patient_id":     patient_id,
-                "symptoms":       symptoms,
-                "symptom_count":  symptom_count,
-                "diagnosis":      diagnosis,
-                "appointment_id": appointment_id,
-            })
-            _print_medical_record_result(result)
-
-        else:
-            print("Exiting doctor menu.")
-            return
-
-
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 def _banner() -> None:
@@ -152,53 +81,6 @@ def _banner() -> None:
     print("           HEALTHAGENT — Terminal Version         ")
     print("  " + "─" * 51)
     print()
-
-
-def _prompt_int(label: str, lo: int, hi: int) -> int:
-    while True:
-        raw = input(label).strip()
-        if raw.isdigit() and lo <= int(raw) <= hi:
-            return int(raw)
-        print(f"  Please enter a number between {lo} and {hi}.")
-
-
-def _print_doctor_appointments(result: dict) -> None:
-    print()
-    if not result["success"]:
-        print(f"  Failed: {result['reason']}")
-        return
-
-    print("=" * 55)
-    print(f"  APPOINTMENTS FOR {result['doctor_name']}")
-    print("=" * 55)
-
-    appointments = result.get("appointments", [])
-    if not appointments:
-        print("  No appointments found.")
-        return
-
-    for i, appt in enumerate(appointments, 1):
-        print(f"  {i}. {appt['scheduled_at']} | {appt['patient_name']} "
-              f"({appt['patient_id']}) | {appt['status']}")
-        if appt.get("reason"):
-            print(f"     Reason: {appt['reason']}")
-        print(f"     Appointment ID: {appt['appointment_id']} | Ref: {appt['booking_ref']}")
-
-
-def _print_medical_record_result(result: dict) -> None:
-    print()
-    if not result["success"]:
-        print(f"  Failed: {result['reason']}")
-        return
-
-    print("=" * 55)
-    print("  MEDICAL RECORD CREATED")
-    print("=" * 55)
-    print(f"  Record ID  : {result['record_id']}")
-    print(f"  Doctor     : {result['doctor_name']} ({result['doctor_id']})")
-    print(f"  Patient    : {result['patient_name']} ({result['patient_id']})")
-    print("=" * 55)
-
 
 if __name__ == "__main__":
     asyncio.run(main())

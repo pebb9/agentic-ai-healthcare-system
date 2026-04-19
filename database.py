@@ -8,7 +8,7 @@ import uuid
 from datetime import datetime, timedelta
 
 from config import (
-    DB_FILE, CSV_FILE, DOCTORS, DISEASE_SPECIALTY,
+    DB_FILE, CSV_FILE, DOCTORS,
     _FIRST_M, _FIRST_F, _FIRST_O, _LAST, INSURERS,
 )
 
@@ -104,22 +104,6 @@ def init_db() -> None:
             FOREIGN KEY (doctor_id)  REFERENCES doctors(id),
             FOREIGN KEY (patient_id) REFERENCES patients(id),
             UNIQUE (doctor_id, scheduled_at)
-        )
-    """)
-
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS medical_records (
-            id             TEXT PRIMARY KEY,
-            patient_id     TEXT NOT NULL,
-            doctor_id      TEXT,
-            appointment_id TEXT,
-            symptoms       TEXT,
-            symptom_count  INTEGER,
-            diagnosis      TEXT,
-            created_at     TEXT NOT NULL,
-            FOREIGN KEY (patient_id)     REFERENCES patients(id),
-            FOREIGN KEY (doctor_id)      REFERENCES doctors(id),
-            FOREIGN KEY (appointment_id) REFERENCES appointments(id)
         )
     """)
 
@@ -282,17 +266,6 @@ def create_appointment(appointment_id: str, ref: str, patient_id: str,
     conn.commit()
     conn.close()
 
-
-def get_appointment(appointment_id: str) -> sqlite3.Row | None:
-    conn = get_connection()
-    row  = conn.execute(
-        "SELECT a.*, d.name AS doctor_name, d.specialty AS doctor_specialty, p.name AS patient_name FROM appointments a JOIN doctors d ON d.id=a.doctor_id JOIN patients p ON p.id=a.patient_id WHERE a.id=?",
-        (appointment_id.upper(),),
-    ).fetchone()
-    conn.close()
-    return row
-
-
 def get_appointment_by_ref(ref: str) -> sqlite3.Row | None:
     conn = get_connection()
     row  = conn.execute(
@@ -321,38 +294,11 @@ def get_appointments_for_patient(patient_id: str, limit: int = 20) -> list[sqlit
     conn.close()
     return rows
 
-
-def get_appointments_for_doctor(doctor_id: str, limit: int = 20) -> list[sqlite3.Row]:
-    conn = get_connection()
-    rows = conn.execute(
-        "SELECT a.*, p.name AS patient_name FROM appointments a JOIN patients p ON p.id=a.patient_id WHERE a.doctor_id=? ORDER BY a.scheduled_at LIMIT ?",
-        (doctor_id.upper(), limit),
-    ).fetchall()
-    conn.close()
-    return rows
-
-
-# ── Medical record queries ────────────────────────────────────────────────────
-
-def create_medical_record(record_id: str, patient_id: str, doctor_id: str | None,
-                           symptoms: str, symptom_count: int | None,
-                           diagnosis: str | None, appointment_id: str | None = None) -> None:
-    conn = get_connection()
-    conn.execute(
-        "INSERT INTO medical_records (id,patient_id,doctor_id,appointment_id,symptoms,symptom_count,diagnosis,created_at) VALUES (?,?,?,?,?,?,?,?)",
-        (record_id, patient_id.upper(), doctor_id.upper() if doctor_id else None,
-         appointment_id.upper() if appointment_id else None,
-         symptoms, symptom_count, diagnosis, datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
-    )
-    conn.commit()
-    conn.close()
-
-
-def get_medical_records_for_patient(patient_id: str, limit: int = 10) -> list[sqlite3.Row]:
-    conn = get_connection()
-    rows = conn.execute(
-        "SELECT * FROM medical_records WHERE patient_id=? ORDER BY created_at DESC LIMIT ?",
-        (patient_id.upper(), limit),
-    ).fetchall()
-    conn.close()
-    return rows
+# def get_medical_records_for_patient(patient_id: str, limit: int = 10) -> list[sqlite3.Row]:
+#     conn = get_connection()
+#     rows = conn.execute(
+#         "SELECT * FROM medical_records WHERE patient_id=? ORDER BY created_at DESC LIMIT ?",
+#         (patient_id.upper(), limit),
+#     ).fetchall()
+#     conn.close()
+#     return rows
