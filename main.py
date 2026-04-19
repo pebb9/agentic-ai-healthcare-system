@@ -12,6 +12,8 @@ from agent    import run_agent
 from database import init_db, get_patient, get_doctor
 from tools    import build_full_context
 from mcp_client import call_tool
+from validations import validate_patient_id, validate_symptoms, validate_advice, validate_booking
+
 
 
 async def main() -> None:
@@ -33,10 +35,13 @@ async def main() -> None:
 # ── Patient flow ──────────────────────────────────────────────────────────────
 
 async def patient_flow() -> None:
-    patient_id = input("Your Patient ID (e.g. PT-00001): ").strip().upper()
-    if not patient_id:
-        print("Patient ID is required.")
-        return
+    while True:
+        raw = input("Your Patient ID (e.g. PT-00001): ").strip().upper()
+        ok, msg = validate_patient_id(raw)
+        if ok:
+            patient_id = raw
+            break
+        print(msg)
 
     patient = get_patient(patient_id)
     if not patient:
@@ -57,16 +62,26 @@ async def patient_flow() -> None:
     #   "Cancel my booking BK-XXXXXXXX"
     #   "I need to reschedule, my ref is BK-XXXXXXXX"
     print()
-    user_message = input("How can we help you today? ").strip()
-    if not user_message:
-        print("Nothing entered. Exiting.")
-        return
+    while True:
+        user_message = input("How can we help you today? ").strip()
+        ok, msg = validate_symptoms(user_message)
+        if ok:
+            break
+        print(msg)
 
-    await run_agent(
+    result = await run_agent(
         user_message    = user_message,
         patient_id      = patient_id,
         patient_context = patient_context,
     )
+ 
+    if result.get("type") == "advice":
+        ok, msg = validate_advice(result.get("text", ""))
+        print(msg if not ok else result["text"])
+ 
+    elif result.get("type") == "booking":
+        ok, msg = validate_booking(result)
+        print(msg if not ok else f"Booking confirmed: {result['booking_ref']}")
 
 
 # ── Doctor flow ───────────────────────────────────────────────────────────────
