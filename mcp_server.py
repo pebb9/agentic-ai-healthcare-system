@@ -217,6 +217,6 @@ def tool_get_appointment_history(patient_id: str) -> str:
 
 if __name__ == "__main__":
     print("Loading model into GPU memory...", file=sys.stderr)
-    # _load_model()
+    _load_model()
     print("Model ready. Starting server.", file=sys.stderr)
     mcp.run(transport="streamable-http")
