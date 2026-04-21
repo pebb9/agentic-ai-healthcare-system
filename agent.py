@@ -136,7 +136,7 @@ async def run_agent(user_message: str, patient_id: str = "",
                     and result.get("total_free_found", 0) == 0):
                 history.append({
                     "role":    "observation",
-                    "content": "No slots were available for that doctor. Consider trying a different doctor_id from the list returned by tool_assess_symptoms.",
+                    "content": "No slots were available for that doctor. Consider trying a different doctor if one was suggested.",
                 })
 
         # ── ask_user ──────────────────────────────────────────────────
@@ -154,7 +154,7 @@ async def run_agent(user_message: str, patient_id: str = "",
             if patient_replies >= 2:
                 history.append({
                     "role":    "observation",
-                    "content": "SYSTEM: The patient has already described their symptoms. Stop asking for more detail. Your next action MUST be call_tool with tool_assess_symptoms.",
+                    "content": "The patient has provided enough information. Do not ask further questions — proceed with the appropriate action.",
                 })
 
         # ── respond (send message, then continue) ────────────────────
