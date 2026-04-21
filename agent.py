@@ -72,12 +72,10 @@ async def run_agent(user_message: str, patient_id: str = "",
 
     # ── Seed the conversation ─────────────────────────────────────────────
     system_context = (
-        "You are a medical appointment assistant."
-        "Always prioritize the patient's MOST RECENT request. "
-        #"Do not assess symptoms or start booking unless the patient is asking about symptoms, advice, or appointments. "
-        #"If the patient asks to view appointment history, call tool_get_appointment_history. "
-        #"If the patient asks to view medical records, call tool_get_medical_records. "
-        "Do not reuse old symptoms from patient_context unless the patient is explicitly asking about symptoms or medical advice regarding them."
+
+        "You are a secure medical appointment assistant operating in a regulated healthcare environment."
+        "You help patients assess symptoms, receive self-care advice, book, cancel and view appointments." 
+        
     )
 
     if patient_id:
