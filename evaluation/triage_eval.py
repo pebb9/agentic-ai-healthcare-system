@@ -1,5 +1,7 @@
 from pathlib import Path
 import sys
+import functools
+print = functools.partial(print, flush=True)
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
@@ -12,7 +14,30 @@ import ast
 
 import pandas as pd
 
-from mcp_client import call_tool
+USE_MOCK = False
+
+if not USE_MOCK:
+    from mcp_client import call_tool
+else:
+    async def call_tool(tool_name: str, arguments: dict):
+        if tool_name == "tool_react_decide":
+            return {
+                "action": "call_tool",
+                "tool": "tool_assess_symptoms",
+                "args": {
+                    "symptoms": "mock symptoms"
+                }
+            }
+
+        if tool_name == "tool_assess_symptoms":
+            return {
+                "urgency": "HIGH",
+                "raw_llm_response": "Likely condition: Pneumonia. Triage level: HIGH."
+            }
+
+        return {
+            "message": f"Mock result for {tool_name}"
+        }
 
 
 DEFAULT_DATASET = "healthcare_with_triage.csv"
@@ -59,25 +84,27 @@ def parse_args():
     return parser.parse_args()
 
 
-async def warmup():
+async def warmup(max_retries=3):
     print("Waiting for MCP server...")
     tools = get_available_tools()
 
-    while True:
+    for attempt in range(1, max_retries + 1):
         try:
-            await call_tool(
+            result = await call_tool(
                 "tool_react_decide",
                 {
                     "messages_json": json.dumps([{"role": "user", "content": "hello"}]),
                     "tools_json": json.dumps(tools),
                 },
             )
-            print("Model ready.\n")
+            print("Model ready.")
+            print("Warmup result:", result)
             return
         except Exception as exc:
-            print(f"Server not ready yet: {exc}")
-            print("Retrying in 5 seconds...\n")
+            print(f"Server not ready yet, attempt {attempt}/{max_retries}: {exc}")
             await asyncio.sleep(5)
+
+    raise RuntimeError("MCP server did not become ready")
 
 
 def normalize_triage(value):
@@ -145,19 +172,23 @@ def extract_prediction_from_assessment_tool(tool_result: str) -> dict:
             "reason": "Empty tool result",
         }
 
-    parsed = None
-
-    try:
-        parsed = json.loads(tool_result)
-    except Exception:
+    if isinstance(tool_result, dict):
+        parsed = tool_result
+    else:
         try:
-            parsed = ast.literal_eval(tool_result)
+            parsed = json.loads(tool_result)
         except Exception:
-            return {
-                "predicted_disease": None,
-                "predicted_triage": None,
-                "reason": f"Could not parse tool_assess_symptoms result: {tool_result}",
-            }
+            try:
+                parsed = ast.literal_eval(tool_result)
+            except Exception:
+                return {
+                    "predicted_disease": None,
+                    "predicted_triage": None,
+                    "reason": f"Could not parse tool_assess_symptoms result: {tool_result}",
+                }
+    
+
+
 
     urgency = str(parsed.get("urgency", "")).strip().upper()
     if urgency == "HIGH":
@@ -180,11 +211,6 @@ def extract_prediction_from_assessment_tool(tool_result: str) -> dict:
     }
 
 def parse_agent_response(raw_response: str) -> dict:
-    """
-    Parse MCP responses that may be:
-    - valid JSON
-    - Python dict strings using single quotes
-    """
     if not raw_response:
         return {
             "action": None,
@@ -196,28 +222,36 @@ def parse_agent_response(raw_response: str) -> dict:
             "reason": "Empty response",
             "raw_response": raw_response,
         }
+    """
+    Parse MCP responses that may be:
+    - valid JSON
+    - Python dict strings using single quotes
+    """
+    if isinstance(raw_response, dict):
+        outer = raw_response
+    else:
+        outer = None
 
-    outer = None
 
-    try:
-        outer = json.loads(raw_response)
-    except Exception:
-        pass
-
-    if outer is None:
         try:
-            outer = ast.literal_eval(raw_response)
-        except Exception as exc:
-            return {
-                "action": None,
-                "message": None,
-                "tool": None,
-                "args": None,
-                "predicted_disease": None,
-                "predicted_triage": None,
-                "reason": f"Could not parse MCP JSON/Python dict: {exc}",
-                "raw_response": raw_response,
-            }
+            outer = json.loads(raw_response)
+        except Exception:
+            pass
+
+        if outer is None:
+            try:
+                outer = ast.literal_eval(raw_response)
+            except Exception as exc:
+                return {
+                    "action": None,
+                    "message": None,
+                    "tool": None,
+                    "args": None,
+                    "predicted_disease": None,
+                    "predicted_triage": None,
+                    "reason": f"Could not parse MCP JSON/Python dict: {exc}",
+                    "raw_response": raw_response,
+                }
 
     if not isinstance(outer, dict):
         return {
@@ -270,8 +304,7 @@ async def query_agent(row: pd.Series) -> dict:
             },
         )
 
-        if not isinstance(raw_response, str):
-            raw_response = str(raw_response)
+      
 
         print(f"RAW MCP RESPONSE TURN {turn}:", raw_response)
         parsed = parse_agent_response(raw_response)
@@ -320,10 +353,10 @@ async def query_agent(row: pd.Series) -> dict:
                     "raw_response": raw_response,
                 }
 
-            if not isinstance(tool_result, str):
-                tool_result = str(tool_result)
+            
 
             print(f"TOOL RESULT {tool_name}:", tool_result)
+            
 
             # Benchmark stop-point: use tool_assess_symptoms as the medical assessment output
             if tool_name == "tool_assess_symptoms":
@@ -336,7 +369,7 @@ async def query_agent(row: pd.Series) -> dict:
                 }
 
             # For any other tool, keep looping
-            messages.append({"role": "assistant", "content": raw_response})
+            messages.append({"role": "assistant", "content":json.dumps(raw_response)})
             messages.append(
                 {
                     "role": "tool",
