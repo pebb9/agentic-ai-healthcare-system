@@ -43,37 +43,6 @@ else:
 DEFAULT_DATASET = "healthcare_with_triage.csv"
 DEFAULT_OUTPUT = "evaluation/results/triage_results.csv"
 
-def get_available_tools():
-    return [
-        {
-            "name": "tool_assess_symptoms",
-            "description": "Assess patient symptoms and return likely condition, urgency, and doctor specialty."
-        },
-        {
-            "name": "tool_get_advice",
-            "description": "Provide self-care advice based on symptoms and urgency."
-        },
-        {
-            "name": "tool_get_slots",
-            "description": "Get appointment slots for a doctor and urgency."
-        },
-        {
-            "name": "tool_book_slot",
-            "description": "Book an appointment slot for a patient."
-        },
-        {
-            "name": "tool_cancel_appointment",
-            "description": "Cancel an existing appointment."
-        },
-        {
-            "name": "tool_get_appointment_history",
-            "description": "Retrieve appointment history for a patient."
-        },
-        {
-            "name": "tool_get_medical_records",
-            "description": "Retrieve a patient's medical records."
-        },
-    ]
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Run triage benchmark against the health agent")
@@ -86,15 +55,17 @@ def parse_args():
 
 async def warmup(max_retries=3):
     print("Waiting for MCP server...")
-    tools = get_available_tools()
 
     for attempt in range(1, max_retries + 1):
         try:
-            result = await call_tool(
-                "tool_react_decide",
+
+            await call_tool(
+                "tool_assess_symptoms",
+
                 {
-                    "messages_json": json.dumps([{"role": "user", "content": "hello"}]),
-                    "tools_json": json.dumps(tools),
+                    "symptoms": "mild headache",
+                    "patient_id": "",
+                    "patient_context": "",
                 },
             )
             print("Model ready.")
@@ -186,9 +157,12 @@ def extract_prediction_from_assessment_tool(tool_result: str) -> dict:
                     "predicted_triage": None,
                     "reason": f"Could not parse tool_assess_symptoms result: {tool_result}",
                 }
+<<<<<<< Updated upstream
     
 
 
+=======
+>>>>>>> Stashed changes
 
     urgency = str(parsed.get("urgency", "")).strip().upper()
     if urgency == "HIGH":
@@ -277,38 +251,30 @@ def parse_agent_response(raw_response: str) -> dict:
     }
 
 async def query_agent(row: pd.Series) -> dict:
-    
-    """
-    Run a small ReAct loop against the MCP agent until it returns a final response.
+    try:
+        symptoms_text = (
+            f"I am {row['Age']} years old, {row['Gender']}. "
+            f"My symptoms are: {row['Symptoms']}"
+        )
 
-    Flow:
-    1. Start conversation
-    2. If agent asks user, answer with dataset symptoms
-    3. If agent calls a tool, execute it and append tool result
-    4. Repeat until agent responds or max turns reached
-    """
-    tools = get_available_tools()
-    messages = [
-        {"role": "user", "content": "Hi, I need help with a health issue."}
-    ]
-
-    max_turns = 8
-    symptoms_sent = False
-
-    for turn in range(1, max_turns + 1):
-        raw_response = await call_tool(
-            "tool_react_decide",
+        tool_result = await call_tool(
+            "tool_assess_symptoms",
             {
-                "messages_json": json.dumps(messages),
-                "tools_json": json.dumps(tools),
+                "symptoms": symptoms_text,
+                "patient_id": "",
+                "patient_context": "",
             },
         )
 
+<<<<<<< Updated upstream
       
+=======
+        print("TOOL RESULT tool_assess_symptoms:", tool_result)
+>>>>>>> Stashed changes
 
-        print(f"RAW MCP RESPONSE TURN {turn}:", raw_response)
-        parsed = parse_agent_response(raw_response)
+        extracted = extract_prediction_from_assessment_tool(tool_result)
 
+<<<<<<< Updated upstream
         action = parsed.get("action")
 
         if action == "ask_user":
@@ -399,21 +365,22 @@ async def query_agent(row: pd.Series) -> dict:
                 "reason": parsed.get("reason"),
                 "raw_response": raw_response,
             }
+=======
+        return {
+            "predicted_disease": extracted.get("predicted_disease"),
+            "predicted_triage": extracted.get("predicted_triage"),
+            "reason": extracted.get("reason"),
+            "raw_response": tool_result,
+        }
+>>>>>>> Stashed changes
 
+    except Exception as exc:
         return {
             "predicted_disease": None,
             "predicted_triage": None,
-            "reason": f"Unhandled agent response: {parsed}",
-            "raw_response": raw_response,
+            "reason": f"Tool call failed: {exc}",
+            "raw_response": "",
         }
-
-    return {
-        "predicted_disease": None,
-        "predicted_triage": None,
-        "reason": f"Max turns reached without final respond after {max_turns} turns",
-        "raw_response": "",
-    }
-
 
 def compute_metrics(df: pd.DataFrame):
     disease_mask = df["predicted_disease"].notna()
