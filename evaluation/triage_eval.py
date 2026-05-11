@@ -59,18 +59,19 @@ async def warmup(max_retries=3):
     for attempt in range(1, max_retries + 1):
         try:
 
-            await call_tool(
+            result = await call_tool(
                 "tool_assess_symptoms",
-
                 {
                     "symptoms": "mild headache",
                     "patient_id": "",
                     "patient_context": "",
                 },
             )
+
             print("Model ready.")
             print("Warmup result:", result)
             return
+
         except Exception as exc:
             print(f"Server not ready yet, attempt {attempt}/{max_retries}: {exc}")
             await asyncio.sleep(5)
@@ -78,11 +79,6 @@ async def warmup(max_retries=3):
     raise RuntimeError("MCP server did not become ready")
 
 
-def normalize_triage(value):
-    if value is None:
-        return None
-    value = str(value).strip().upper()
-    return value if value in {"LOW", "MEDIUM", "HIGH"} else None
 
 def extract_prediction_from_text(text: str) -> dict:
     """
@@ -157,12 +153,6 @@ def extract_prediction_from_assessment_tool(tool_result: str) -> dict:
                     "predicted_triage": None,
                     "reason": f"Could not parse tool_assess_symptoms result: {tool_result}",
                 }
-<<<<<<< Updated upstream
-    
-
-
-=======
->>>>>>> Stashed changes
 
     urgency = str(parsed.get("urgency", "")).strip().upper()
     if urgency == "HIGH":
@@ -184,71 +174,6 @@ def extract_prediction_from_assessment_tool(tool_result: str) -> dict:
         "reason": raw_text if raw_text else str(parsed),
     }
 
-def parse_agent_response(raw_response: str) -> dict:
-    if not raw_response:
-        return {
-            "action": None,
-            "message": None,
-            "tool": None,
-            "args": None,
-            "predicted_disease": None,
-            "predicted_triage": None,
-            "reason": "Empty response",
-            "raw_response": raw_response,
-        }
-    """
-    Parse MCP responses that may be:
-    - valid JSON
-    - Python dict strings using single quotes
-    """
-    if isinstance(raw_response, dict):
-        outer = raw_response
-    else:
-        outer = None
-
-
-        try:
-            outer = json.loads(raw_response)
-        except Exception:
-            pass
-
-        if outer is None:
-            try:
-                outer = ast.literal_eval(raw_response)
-            except Exception as exc:
-                return {
-                    "action": None,
-                    "message": None,
-                    "tool": None,
-                    "args": None,
-                    "predicted_disease": None,
-                    "predicted_triage": None,
-                    "reason": f"Could not parse MCP JSON/Python dict: {exc}",
-                    "raw_response": raw_response,
-                }
-
-    if not isinstance(outer, dict):
-        return {
-            "action": None,
-            "message": None,
-            "tool": None,
-            "args": None,
-            "predicted_disease": None,
-            "predicted_triage": None,
-            "reason": f"Unexpected response format: {type(outer).__name__}",
-            "raw_response": raw_response,
-        }
-
-    return {
-        "action": outer.get("action"),
-        "message": outer.get("message"),
-        "tool": outer.get("tool"),
-        "args": outer.get("args"),
-        "predicted_disease": outer.get("predicted_disease"),
-        "predicted_triage": normalize_triage(outer.get("predicted_triage")),
-        "reason": outer.get("reason"),
-        "raw_response": raw_response,
-    }
 
 async def query_agent(row: pd.Series) -> dict:
     try:
@@ -266,113 +191,16 @@ async def query_agent(row: pd.Series) -> dict:
             },
         )
 
-<<<<<<< Updated upstream
-      
-=======
         print("TOOL RESULT tool_assess_symptoms:", tool_result)
->>>>>>> Stashed changes
 
         extracted = extract_prediction_from_assessment_tool(tool_result)
 
-<<<<<<< Updated upstream
-        action = parsed.get("action")
-
-        if action == "ask_user":
-            agent_message = parsed.get("message", "")
-            messages.append({"role": "assistant", "content": agent_message})
-
-            if not symptoms_sent:
-                user_reply = (
-                    f"I am {row['Age']} years old, {row['Gender']}, "
-                    f"and I have these symptoms: {row['Symptoms']}."
-                )
-                symptoms_sent = True
-            else:
-                # If the agent keeps asking questions, answer conservatively once.
-                user_reply = (
-                    "Based on my current symptoms, please continue with your assessment "
-                    "and tell me the most likely disease and triage level."
-                )
-
-            messages.append({"role": "user", "content": user_reply})
-            continue
-
-        if action == "call_tool":
-            tool_name = parsed.get("tool")
-            tool_args = parsed.get("args") or {}
-
-            if not tool_name:
-                return {
-                    "predicted_disease": None,
-                    "predicted_triage": None,
-                    "reason": "Agent requested tool call without tool name",
-                    "raw_response": raw_response,
-                }
-
-            try:
-                tool_result = await call_tool(tool_name, tool_args)
-            except Exception as exc:
-                return {
-                    "predicted_disease": None,
-                    "predicted_triage": None,
-                    "reason": f"Tool call failed: {tool_name} -> {exc}",
-                    "raw_response": raw_response,
-                }
-
-            
-
-            print(f"TOOL RESULT {tool_name}:", tool_result)
-            
-
-            # Benchmark stop-point: use tool_assess_symptoms as the medical assessment output
-            if tool_name == "tool_assess_symptoms":
-                extracted = extract_prediction_from_assessment_tool(tool_result)
-                return {
-                    "predicted_disease": extracted.get("predicted_disease"),
-                    "predicted_triage": extracted.get("predicted_triage"),
-                    "reason": extracted.get("reason"),
-                    "raw_response": tool_result,
-                }
-
-            # For any other tool, keep looping
-            messages.append({"role": "assistant", "content":json.dumps(raw_response)})
-            messages.append(
-                {
-                    "role": "tool",
-                    "content": f"{tool_name} returned: {tool_result}",
-                }
-            )
-            continue
-
-        if action == "respond":
-            final_message = parsed.get("message", "")
-
-            # Try to extract structured prediction from the final message
-            extracted = extract_prediction_from_text(final_message)
-
-            return {
-                "predicted_disease": extracted.get("predicted_disease"),
-                "predicted_triage": extracted.get("predicted_triage"),
-                "reason": extracted.get("reason") or final_message,
-                "raw_response": raw_response,
-            }
-
-        # Direct prediction shape fallback
-        if parsed.get("predicted_disease") is not None or parsed.get("predicted_triage") is not None:
-            return {
-                "predicted_disease": parsed.get("predicted_disease"),
-                "predicted_triage": parsed.get("predicted_triage"),
-                "reason": parsed.get("reason"),
-                "raw_response": raw_response,
-            }
-=======
         return {
             "predicted_disease": extracted.get("predicted_disease"),
             "predicted_triage": extracted.get("predicted_triage"),
             "reason": extracted.get("reason"),
             "raw_response": tool_result,
         }
->>>>>>> Stashed changes
 
     except Exception as exc:
         return {
