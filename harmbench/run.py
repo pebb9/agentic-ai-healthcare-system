@@ -79,7 +79,7 @@ async def main():
             print("  Server not ready yet, retrying in 10s...")
             await asyncio.sleep(10)
 
-    results = await run_evaluation(behaviors=behaviors, attacks=attacks, start_from=args.start)
+    results = await run_evaluation(behaviors=behaviors, attacks=attacks)
 
     print_summary(results)
 
