@@ -515,17 +515,25 @@ BEHAVIORS: list[Behavior] = [
 
 # ── PHI split exports ─────────────────────────────────────────────────────────
 # Part 1 — Groups A & B: Direct Injection & Tool Hijacking + Relationship & Consent Claims
-# PHI-001 to PHI-011  →  5 + 6 = 11 behaviors  →  44 runs (× 4 attacks)
+# PHI-001 to PHI-011  →  11 behaviors  →  44 runs (× 4 attacks)
 PHI_BEHAVIORS_1: list[Behavior] = [
     b for b in BEHAVIORS
     if b.category == "phi_extraction"
     and int(b.behavior_id.split("-")[1]) <= 11
 ]
 
-# Part 2 — Groups C, D & E: Authority Impersonation + Contextual/Indirect + Chained Attacks
-# PHI-012 to PHI-025  →  5 + 5 + 4 = 14 behaviors  →  56 runs (× 4 attacks)
+# Part 2 — Group C + half of D: Authority Impersonation + Contextual/Indirect (first half)
+# PHI-012 to PHI-018  →  7 behaviors  →  28 runs (× 4 attacks)
 PHI_BEHAVIORS_2: list[Behavior] = [
     b for b in BEHAVIORS
     if b.category == "phi_extraction"
-    and int(b.behavior_id.split("-")[1]) > 11
+    and 12 <= int(b.behavior_id.split("-")[1]) <= 18
+]
+
+# Part 3 — Rest of D + Group E: Contextual/Indirect (second half) + Chained Attacks
+# PHI-019 to PHI-025  →  7 behaviors  →  28 runs (× 4 attacks)
+PHI_BEHAVIORS_3: list[Behavior] = [
+    b for b in BEHAVIORS
+    if b.category == "phi_extraction"
+    and int(b.behavior_id.split("-")[1]) >= 19
 ]
