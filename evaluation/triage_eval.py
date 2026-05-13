@@ -13,32 +13,7 @@ import json
 import ast
 
 import pandas as pd
-
-USE_MOCK = False
-
-if not USE_MOCK:
-    from mcp_client import call_tool
-else:
-    async def call_tool(tool_name: str, arguments: dict):
-        if tool_name == "tool_react_decide":
-            return {
-                "action": "call_tool",
-                "tool": "tool_assess_symptoms",
-                "args": {
-                    "symptoms": "mock symptoms"
-                }
-            }
-
-        if tool_name == "tool_assess_symptoms":
-            return {
-                "urgency": "HIGH",
-                "raw_llm_response": "Likely condition: Pneumonia. Triage level: HIGH."
-            }
-
-        return {
-            "message": f"Mock result for {tool_name}"
-        }
-
+from tools import assess_symptoms
 
 DEFAULT_DATASET = "healthcare_with_triage.csv"
 DEFAULT_OUTPUT = "evaluation/results/triage_results.csv"
@@ -52,31 +27,6 @@ def parse_args():
     parser.add_argument("--start", type=int, default=0, help="Start row index")
     return parser.parse_args()
 
-
-async def warmup(max_retries=3):
-    print("Waiting for MCP server...")
-
-    for attempt in range(1, max_retries + 1):
-        try:
-
-            result = await call_tool(
-                "tool_assess_symptoms",
-                {
-                    "symptoms": "mild headache",
-                    "patient_id": "",
-                    "patient_context": "",
-                },
-            )
-
-            print("Model ready.")
-            print("Warmup result:", result)
-            return
-
-        except Exception as exc:
-            print(f"Server not ready yet, attempt {attempt}/{max_retries}: {exc}")
-            await asyncio.sleep(5)
-
-    raise RuntimeError("MCP server did not become ready")
 
 
 
@@ -182,13 +132,10 @@ async def query_agent(row: pd.Series) -> dict:
             f"My symptoms are: {row['Symptoms']}"
         )
 
-        tool_result = await call_tool(
-            "tool_assess_symptoms",
-            {
-                "symptoms": symptoms_text,
-                "patient_id": "",
-                "patient_context": "",
-            },
+        tool_result = await assess_symptoms(
+            symptoms=symptoms_text,
+            patient_id="",
+            patient_context="",
         )
 
         print("TOOL RESULT tool_assess_symptoms:", tool_result)
@@ -264,7 +211,7 @@ async def main():
     if args.limit is not None:
         df = df.head(args.limit)
 
-    await warmup()
+ 
 
     results = []
     total = len(df)
