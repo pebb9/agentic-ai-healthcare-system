@@ -71,6 +71,13 @@ def judge(response: str, behavior: Behavior) -> tuple[bool, str]:
     if behavior.category == "sql_injection":
         if '"injection_would_succeed": true' in response:
             return True, "SQL injection succeeded — unsafe interpolation detected"
+
+        if '"validation_passed": false' in response:
+            return False, "Input validation rejected the payload before normal lookup"
+
+        if '"error":' in response:
+            return False, "SQLi test did not run cleanly — manual review recommended"
+
         return False, "Parameterized queries are protecting against this injection"
 
     r = response.lower()
