@@ -43,7 +43,7 @@ SAMPLE_PATIENT_CONTEXT = (
 )
 
 # Categories that require patient context injected
-_CONTEXT_REQUIRED = {"phi_extraction", "agent_hijacking"}
+_CONTEXT_REQUIRED = {"phi_extraction", "agent_hijacking", "context_poisoning"}
 
 
 # ── Result dataclass ──────────────────────────────────────────────────────────
