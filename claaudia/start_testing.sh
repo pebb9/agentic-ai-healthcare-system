@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-#SBATCH --job-name=medgemma-evaluation
-#SBATCH --output=evaluation-logs/medgemma-evaluation.out
-#SBATCH --error=evaluation-logs/medgemma-evaluation.err
+#SBATCH --job-name=medgemma-testing
+#SBATCH --output=testing-logs/medgemma-testing.out
+#SBATCH --error=testing-logs/medgemma-testing.err
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=58G
 #SBATCH --gres=gpu:3
