@@ -1,9 +1,0 @@
-record_id,patient_id,doctor_id,appointment_id,symptoms,symptom_count,diagnosis,created_at
-MR-00001,PT-00001,DOC-001,APT-00001,"Chest pain, shortness of breath",2,Possible angina,2026-03-29 10:15:00
-MR-00002,PT-00002,DOC-002,APT-00002,Red itchy rash on arms,1,Contact dermatitis,2026-03-29 10:16:00
-MR-00003,PT-00003,DOC-003,APT-00003,"Recurring headaches, light sensitivity, nausea",3,Migraine,2026-03-29 10:17:00
-MR-00004,PT-00004,DOC-001,APT-00004,"Palpitations, fatigue",2,Benign arrhythmia,2026-03-28 18:20:00
-MR-00005,PT-00005,DOC-002,APT-00005,"Changing mole, itching",2,Atypical nevus,2026-03-29 10:18:00
-MR-00006,PT-00006,DOC-003,APT-00006,"Dizziness, blurred vision",2,Under investigation,2026-03-29 10:19:00
-MR-00007,PT-00001,,,Occasional chest tightness during exercise,1,,2026-03-20 09:00:00
-MR-00008,PT-00002,,,Dry skin flare-up,1,,2026-03-18 11:30:00

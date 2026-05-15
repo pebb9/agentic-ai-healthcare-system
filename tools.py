@@ -2,18 +2,18 @@
 
 from datetime import datetime, timedelta
 
-from config import DOCTORS, DISEASE_SPECIALTY
+from config import DISEASE_SPECIALTY
 from database import (
     generate_booking_ref,
     get_patient, get_doctor, get_all_doctors,
     get_free_slots, is_slot_free, mark_slot_booked, mark_slot_free,
-    create_appointment, get_appointment, get_appointment_by_ref,
+    create_appointment, get_appointment_by_ref,
     cancel_appointment_by_ref,
-    get_appointments_for_doctor,
-    get_medical_records_for_patient, create_medical_record,
     get_appointments_for_patient
 )
 from llm.llm_27b_text_it import ask_medgemma
+# This is for local API runs.
+# from llm.llm_API import ask_medgemma
 
 
 # ── Symptom → specialty map (all 28 CSV symptoms covered) ────────────────────
@@ -92,9 +92,8 @@ def _match_doctors(symptoms: str, disease: str | None = None) -> list[dict]:
 
 
 def build_full_context(patient_id: str) -> str:
-    """Build RAG context from the patient's DB record and medical history."""
+    """Build RAG context from the patient's DB record """
     patient = get_patient(patient_id)
-    records = get_medical_records_for_patient(patient_id, limit=5)
 
     parts = []
     if patient:
@@ -106,15 +105,6 @@ def build_full_context(patient_id: str) -> str:
             parts.append(f"Known diagnosis: {patient['disease']}.")
         if patient["symptoms"]:
             parts.append(f"Recorded symptoms: {patient['symptoms']}.")
-
-    if records:
-        parts.append("Recent medical records:")
-        for r in records:
-            parts.append(
-                f"- Symptoms: {r['symptoms'] or 'N/A'} | "
-                f"Diagnosis: {r['diagnosis'] or 'N/A'} | "
-                f"Date: {r['created_at']}"
-            )
 
     return "\n".join(parts)
 
@@ -283,106 +273,4 @@ def get_appointment_history(patient_id: str) -> dict:
         "success":      True,
         "patient_name": patient["name"],
         "appointments": history,
-    }
-# ── Tool 7: get patient medical records ────────────────────────────────────────────────
-def get_medical_records(patient_id: str) -> dict:
-    print(f"  [MCP] get_medical_records  patient={patient_id}")
-
-    patient = get_patient(patient_id)
-    if not patient:
-        return {"success": False, "reason": "Patient not found."}
-
-    records = get_medical_records_for_patient(patient_id, limit=10)
-    if not records:
-        return {"success": True, "patient_name": patient["name"], "records": [], "message": "No medical records found."}
-
-    medical = []
-    for r in records:
-        medical.append({
-            "date":      r["created_at"],
-            "symptoms":  r["symptoms"],
-            "diagnosis": r["diagnosis"],
-        })
-
-    return {
-        "success":      True,
-        "patient_name": patient["name"],
-        "records":      medical,
-    }
-
-
-
-
-# ── Doctor tools ──────────────────────────────────────────────────────────────
-
-def doctor_get_my_appointments(doctor_id: str) -> dict:
-    print(f"  [MCP] doctor_get_my_appointments  doctor={doctor_id}")
-
-    doctor = get_doctor(doctor_id)
-    if not doctor:
-        return {"success": False, "reason": "Doctor not found."}
-
-    items = []
-    for a in get_appointments_for_doctor(doctor["id"]):
-        items.append({
-            "appointment_id": a["id"],
-            "booking_ref":    a["booking_ref"],
-            "patient_id":     a["patient_id"],
-            "patient_name":   a["patient_name"],
-            "scheduled_at":   a["scheduled_at"],
-            "status":         a["status"],
-            "reason":         a["reason"],
-        })
-
-    return {
-        "success":      True,
-        "doctor_id":    doctor["id"],
-        "doctor_name":  doctor["name"],
-        "specialty":    doctor["specialty"],
-        "appointments": items,
-    }
-
-
-def doctor_create_medical_record(
-    doctor_id: str, patient_id: str, symptoms: str,
-    symptom_count: int | None = None,
-    diagnosis: str | None = None,
-    appointment_id: str | None = None,
-) -> dict:
-    print(f"  [MCP] doctor_create_medical_record  patient={patient_id}")
-
-    doctor  = get_doctor(doctor_id)
-    patient = get_patient(patient_id)
-
-    if not doctor:  return {"success": False, "reason": "Doctor not found."}
-    if not patient: return {"success": False, "reason": "Patient not found."}
-
-    linked_id = appointment_id.upper() if appointment_id else None
-    if linked_id:
-        appt = get_appointment(linked_id)
-        if not appt:
-            return {"success": False, "reason": "Appointment not found."}
-        if appt["doctor_id"] != doctor["id"]:
-            return {"success": False, "reason": "Appointment does not belong to this doctor."}
-        if appt["patient_id"] != patient["id"]:
-            return {"success": False, "reason": "Appointment does not belong to this patient."}
-
-    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-    record_id = f"MR-{patient['id'].split('-')[-1]}-{timestamp}"
-
-    create_medical_record(
-        record_id=record_id, patient_id=patient["id"],
-        doctor_id=doctor["id"], symptoms=symptoms,
-        symptom_count=symptom_count, diagnosis=diagnosis,
-        appointment_id=linked_id,
-    )
-
-    return {
-        "success":        True,
-        "record_id":      record_id,
-        "doctor_id":      doctor["id"],
-        "doctor_name":    doctor["name"],
-        "patient_id":     patient["id"],
-        "patient_name":   patient["name"],
-        "appointment_id": linked_id,
     }
