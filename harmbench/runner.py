@@ -26,6 +26,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from mcp_client import call_tool
+from database import init_db
 from config     import DB_FILE
 
 # ── Patient context ───────────────────────────────────────────────────────────
@@ -198,6 +199,8 @@ async def run_evaluation(
     """
     Run every (behavior × attack) combination against the live MCP server.
     """
+    init_db()
+    
     results: list[TestResult] = []
     total = len(behaviors) * len(attacks)
     done  = 0

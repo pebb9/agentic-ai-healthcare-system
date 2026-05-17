@@ -1,0 +1,431 @@
+Loading model into GPU memory...
+[05/16/26 00:40:45] INFO     HTTP Request: HEAD                  _client.py:1025
+                             https://huggingface.co/google/medge                
+                             mma-27b-text-it/resolve/main/config                
+                             .json "HTTP/1.1 200 OK"                            
+Loading weights:   0%|          | 0/808 [00:00<?, ?it/s]Loading weights:   0%|          | 1/808 [00:22<4:57:54, 22.15s/it]Loading weights:   0%|          | 2/808 [00:24<2:19:54, 10.42s/it]Loading weights:   0%|          | 4/808 [00:25<55:48,  4.16s/it]  Loading weights:   1%|          | 5/808 [00:26<43:17,  3.23s/it]Loading weights:   1%|          | 6/808 [00:27<32:36,  2.44s/it]Loading weights:   1%|          | 7/808 [00:27<23:44,  1.78s/it]Loading weights:   1%|▏         | 12/808 [00:28<10:09,  1.31it/s]Loading weights:   2%|▏         | 16/808 [00:33<12:04,  1.09it/s]Loading weights:   2%|▏         | 19/808 [00:33<09:05,  1.45it/s]Loading weights:   2%|▏         | 20/808 [00:34<09:02,  1.45it/s]Loading weights:   3%|▎         | 25/808 [00:35<05:37,  2.32it/s]Loading weights:   3%|▎         | 27/808 [00:35<04:41,  2.78it/s]Loading weights:   4%|▎         | 29/808 [00:36<05:38,  2.30it/s]Loading weights:   4%|▎         | 30/808 [00:40<12:23,  1.05it/s]Loading weights:   4%|▍         | 32/808 [00:41<09:12,  1.41it/s]Loading weights:   4%|▍         | 34/808 [00:41<07:05,  1.82it/s]Loading weights:   5%|▍         | 37/808 [00:41<04:49,  2.66it/s]Loading weights:   5%|▍         | 39/808 [00:42<05:03,  2.54it/s]Loading weights:   5%|▌         | 42/808 [00:44<05:47,  2.20it/s]Loading weights:   5%|▌         | 43/808 [00:47<10:45,  1.18it/s]Loading weights:   6%|▌         | 47/808 [00:47<06:23,  1.98it/s]Loading weights:   6%|▌         | 48/808 [00:48<06:47,  1.87it/s]Loading weights:   6%|▌         | 50/808 [00:49<06:23,  1.98it/s]Loading weights:   6%|▋         | 51/808 [00:49<05:33,  2.27it/s]Loading weights:   7%|▋         | 55/808 [00:51<05:05,  2.46it/s]Loading weights:   7%|▋         | 56/808 [00:53<08:43,  1.44it/s]Loading weights:   7%|▋         | 57/808 [00:55<10:58,  1.14it/s]Loading weights:   7%|▋         | 58/808 [00:55<09:15,  1.35it/s]Loading weights:   8%|▊         | 62/808 [00:55<05:15,  2.36it/s]Loading weights:   8%|▊         | 63/808 [00:56<05:37,  2.20it/s]Loading weights:   8%|▊         | 66/808 [00:56<03:55,  3.15it/s]Loading weights:   8%|▊         | 67/808 [00:59<08:52,  1.39it/s]Loading weights:   9%|▊         | 70/808 [01:01<08:52,  1.39it/s]Loading weights:   9%|▉         | 71/808 [01:02<09:18,  1.32it/s]Loading weights:   9%|▉         | 76/808 [01:04<05:56,  2.05it/s]Loading weights:  10%|▉         | 80/808 [01:04<03:47,  3.21it/s]Loading weights:  10%|█         | 82/808 [01:09<09:26,  1.28it/s]Loading weights:  10%|█         | 83/808 [01:11<11:46,  1.03it/s]Loading weights:  10%|█         | 84/808 [01:12<11:54,  1.01it/s]Loading weights:  11%|█         | 88/808 [01:13<07:27,  1.61it/s]Loading weights:  11%|█         | 89/808 [01:13<06:42,  1.79it/s]Loading weights:  11%|█▏        | 91/808 [01:14<06:11,  1.93it/s]Loading weights:  11%|█▏        | 92/808 [01:14<05:55,  2.01it/s]Loading weights:  12%|█▏        | 94/808 [01:16<06:35,  1.80it/s]Loading weights:  12%|█▏        | 95/808 [01:17<08:23,  1.42it/s]Loading weights:  12%|█▏        | 96/808 [01:20<13:54,  1.17s/it]Loading weights:  12%|█▏        | 97/808 [01:21<12:50,  1.08s/it]Loading weights:  12%|█▎        | 101/808 [01:21<05:45,  2.05it/s]Loading weights:  13%|█▎        | 102/808 [01:21<05:46,  2.04it/s]Loading weights:  13%|█▎        | 104/808 [01:21<04:04,  2.88it/s]Loading weights:  13%|█▎        | 105/808 [01:22<04:17,  2.73it/s]Loading weights:  13%|█▎        | 106/808 [01:25<10:35,  1.10it/s]Loading weights:  13%|█▎        | 108/808 [01:26<08:57,  1.30it/s]Loading weights:  13%|█▎        | 109/808 [01:27<10:02,  1.16it/s]Loading weights:  14%|█▍        | 112/808 [01:28<06:14,  1.86it/s]Loading weights:  14%|█▍        | 114/808 [01:28<05:07,  2.26it/s]Loading weights:  14%|█▍        | 115/808 [01:28<04:47,  2.41it/s]Loading weights:  14%|█▍        | 116/808 [01:29<04:50,  2.39it/s]Loading weights:  15%|█▍        | 120/808 [01:30<04:42,  2.43it/s]Loading weights:  15%|█▍        | 121/808 [01:35<11:47,  1.03s/it]Loading weights:  15%|█▌        | 124/808 [01:35<07:14,  1.57it/s]Loading weights:  16%|█▌        | 127/808 [01:35<05:10,  2.19it/s]Loading weights:  16%|█▌        | 128/808 [01:36<05:44,  1.97it/s]Loading weights:  16%|█▋        | 133/808 [01:37<04:01,  2.80it/s]Loading weights:  17%|█▋        | 134/808 [01:39<06:31,  1.72it/s]Loading weights:  17%|█▋        | 135/808 [01:42<09:43,  1.15it/s]Loading weights:  17%|█▋        | 136/808 [01:42<09:25,  1.19it/s]Loading weights:  17%|█▋        | 140/808 [01:43<05:00,  2.22it/s]Loading weights:  17%|█▋        | 141/808 [01:43<04:41,  2.37it/s]Loading weights:  18%|█▊        | 145/808 [01:45<05:05,  2.17it/s]Loading weights:  18%|█▊        | 147/808 [01:47<06:21,  1.73it/s]Loading weights:  18%|█▊        | 148/808 [01:50<09:50,  1.12it/s]Loading weights:  19%|█▊        | 150/808 [01:50<07:24,  1.48it/s]Loading weights:  19%|█▉        | 155/808 [01:51<04:53,  2.22it/s]Loading weights:  20%|█▉        | 159/808 [01:52<04:09,  2.60it/s]Loading weights:  20%|█▉        | 160/808 [01:57<09:20,  1.16it/s]Loading weights:  20%|█▉        | 161/808 [01:57<08:10,  1.32it/s]Loading weights:  20%|██        | 164/808 [01:57<05:34,  1.93it/s]Loading weights:  21%|██        | 167/808 [01:58<04:01,  2.65it/s]Loading weights:  21%|██        | 168/808 [01:58<04:41,  2.27it/s]Loading weights:  21%|██▏       | 172/808 [02:00<05:00,  2.12it/s]Loading weights:  21%|██▏       | 173/808 [02:05<11:24,  1.08s/it]Loading weights:  22%|██▏       | 176/808 [02:06<07:58,  1.32it/s]Loading weights:  22%|██▏       | 179/808 [02:06<05:20,  1.96it/s]Loading weights:  22%|██▏       | 180/808 [02:07<05:27,  1.91it/s]Loading weights:  23%|██▎       | 185/808 [02:09<05:22,  1.93it/s]Loading weights:  23%|██▎       | 186/808 [02:13<09:28,  1.09it/s]Loading weights:  23%|██▎       | 188/808 [02:13<07:17,  1.42it/s]Loading weights:  24%|██▍       | 192/808 [02:14<04:37,  2.22it/s]Loading weights:  24%|██▍       | 194/808 [02:14<03:54,  2.62it/s]Loading weights:  24%|██▍       | 196/808 [02:14<03:18,  3.08it/s]Loading weights:  25%|██▍       | 198/808 [02:17<06:21,  1.60it/s]Loading weights:  25%|██▍       | 199/808 [02:19<08:34,  1.18it/s]Loading weights:  25%|██▍       | 200/808 [02:21<10:34,  1.04s/it]Loading weights:  25%|██▌       | 205/808 [02:21<04:44,  2.12it/s]Loading weights:  25%|██▌       | 206/808 [02:22<05:31,  1.81it/s]Loading weights:  26%|██▌       | 207/808 [02:23<05:17,  1.89it/s]Loading weights:  26%|██▌       | 211/808 [02:24<04:30,  2.21it/s]Loading weights:  26%|██▌       | 212/808 [02:29<10:32,  1.06s/it]Loading weights:  27%|██▋       | 218/808 [02:29<04:46,  2.06it/s]Loading weights:  27%|██▋       | 220/808 [02:29<04:05,  2.40it/s]Loading weights:  27%|██▋       | 222/808 [02:31<04:45,  2.05it/s]Loading weights:  28%|██▊       | 224/808 [02:33<06:45,  1.44it/s]Loading weights:  28%|██▊       | 225/808 [02:35<07:41,  1.26it/s]Loading weights:  28%|██▊       | 226/808 [02:37<10:36,  1.09s/it]Loading weights:  28%|██▊       | 229/808 [02:37<06:16,  1.54it/s]Loading weights:  28%|██▊       | 230/808 [02:38<06:05,  1.58it/s]Loading weights:  29%|██▉       | 234/808 [02:38<03:37,  2.64it/s]Loading weights:  29%|██▉       | 235/808 [02:40<06:00,  1.59it/s]Loading weights:  29%|██▉       | 238/808 [02:42<05:25,  1.75it/s]Loading weights:  30%|██▉       | 239/808 [02:44<07:09,  1.32it/s]Loading weights:  30%|███       | 243/808 [02:44<03:52,  2.44it/s]Loading weights:  30%|███       | 245/808 [02:45<03:50,  2.44it/s]Loading weights:  30%|███       | 246/808 [02:45<03:55,  2.38it/s]Loading weights:  31%|███       | 250/808 [02:47<04:07,  2.25it/s]Loading weights:  31%|███       | 251/808 [02:51<08:57,  1.04it/s]Loading weights:  31%|███▏      | 253/808 [02:51<06:40,  1.39it/s]Loading weights:  32%|███▏      | 257/808 [02:51<03:45,  2.44it/s]Loading weights:  32%|███▏      | 259/808 [02:52<03:12,  2.85it/s]Loading weights:  32%|███▏      | 261/808 [02:52<02:48,  3.25it/s]Loading weights:  33%|███▎      | 263/808 [02:54<04:11,  2.17it/s]Loading weights:  33%|███▎      | 264/808 [02:55<05:42,  1.59it/s]Loading weights:  33%|███▎      | 265/808 [02:58<09:16,  1.02s/it]Loading weights:  33%|███▎      | 267/808 [02:59<06:48,  1.33it/s]Loading weights:  33%|███▎      | 270/808 [02:59<04:21,  2.06it/s]Loading weights:  34%|███▎      | 272/808 [02:59<03:44,  2.39it/s]Loading weights:  34%|███▍      | 274/808 [03:00<03:22,  2.63it/s]Loading weights:  34%|███▍      | 276/808 [03:02<04:54,  1.81it/s]Loading weights:  34%|███▍      | 277/808 [03:04<07:47,  1.14it/s]Loading weights:  34%|███▍      | 278/808 [03:06<09:06,  1.03s/it]Loading weights:  35%|███▍      | 280/808 [03:06<06:04,  1.45it/s]Loading weights:  35%|███▌      | 283/808 [03:07<03:47,  2.30it/s]Loading weights:  35%|███▌      | 285/808 [03:07<03:46,  2.31it/s]Loading weights:  36%|███▌      | 288/808 [03:08<03:01,  2.86it/s]Loading weights:  36%|███▌      | 289/808 [03:12<07:58,  1.08it/s]Loading weights:  36%|███▌      | 290/808 [03:13<08:21,  1.03it/s]Loading weights:  36%|███▋      | 294/808 [03:13<04:15,  2.01it/s]Loading weights:  37%|███▋      | 295/808 [03:14<04:20,  1.97it/s]Loading weights:  37%|███▋      | 298/808 [03:14<02:46,  3.06it/s]Loading weights:  37%|███▋      | 300/808 [03:14<02:16,  3.73it/s]Loading weights:  37%|███▋      | 301/808 [03:18<06:17,  1.34it/s]Loading weights:  38%|███▊      | 303/808 [03:21<08:48,  1.05s/it]Loading weights:  38%|███▊      | 304/808 [03:21<07:26,  1.13it/s]Loading weights:  38%|███▊      | 305/808 [03:21<06:10,  1.36it/s]Loading weights:  38%|███▊      | 310/808 [03:22<03:22,  2.46it/s]Loading weights:  39%|███▉      | 315/808 [03:23<02:46,  2.96it/s]Loading weights:  39%|███▉      | 316/808 [03:27<06:14,  1.31it/s]Loading weights:  39%|███▉      | 317/808 [03:28<05:35,  1.46it/s]Loading weights:  40%|███▉      | 320/808 [03:28<03:43,  2.19it/s]Loading weights:  40%|███▉      | 322/808 [03:30<04:40,  1.73it/s]Loading weights:  40%|████      | 325/808 [03:30<03:31,  2.28it/s]Loading weights:  40%|████      | 327/808 [03:33<05:00,  1.60it/s]Loading weights:  41%|████      | 329/808 [03:37<08:13,  1.03s/it]Loading weights:  41%|████      | 331/808 [03:37<06:16,  1.27it/s]Loading weights:  41%|████▏     | 335/808 [03:38<04:08,  1.91it/s]Loading weights:  42%|████▏     | 336/808 [03:39<04:38,  1.70it/s]Loading weights:  42%|████▏     | 339/808 [03:40<03:26,  2.27it/s]Loading weights:  42%|████▏     | 341/808 [03:41<04:23,  1.77it/s]Loading weights:  42%|████▏     | 342/808 [03:43<05:26,  1.43it/s]Loading weights:  42%|████▏     | 343/808 [03:44<06:35,  1.18it/s]Loading weights:  43%|████▎     | 346/808 [03:45<03:58,  1.94it/s]Loading weights:  43%|████▎     | 347/808 [03:45<03:29,  2.20it/s]Loading weights:  43%|████▎     | 349/808 [03:46<03:17,  2.33it/s]Loading weights:  43%|████▎     | 350/808 [03:46<02:54,  2.62it/s]Loading weights:  44%|████▎     | 353/808 [03:46<01:46,  4.26it/s]Loading weights:  44%|████▍     | 354/808 [03:48<03:44,  2.02it/s]Loading weights:  44%|████▍     | 355/808 [03:51<08:45,  1.16s/it]Loading weights:  44%|████▍     | 358/808 [03:52<05:00,  1.50it/s]Loading weights:  45%|████▍     | 361/808 [03:53<03:47,  1.97it/s]Loading weights:  45%|████▍     | 362/808 [03:53<04:05,  1.82it/s]Loading weights:  45%|████▍     | 363/808 [03:53<03:30,  2.11it/s]Loading weights:  45%|████▌     | 366/808 [03:56<04:17,  1.72it/s]Loading weights:  46%|████▌     | 368/808 [03:58<05:30,  1.33it/s]Loading weights:  46%|████▌     | 369/808 [04:01<08:35,  1.17s/it]Loading weights:  46%|████▋     | 374/808 [04:03<04:57,  1.46it/s]Loading weights:  47%|████▋     | 378/808 [04:03<03:13,  2.22it/s]Loading weights:  47%|████▋     | 379/808 [04:05<04:47,  1.49it/s]Loading weights:  47%|████▋     | 381/808 [04:06<04:39,  1.53it/s]Loading weights:  47%|████▋     | 382/808 [04:09<06:55,  1.03it/s]Loading weights:  48%|████▊     | 387/808 [04:09<03:25,  2.05it/s]Loading weights:  48%|████▊     | 388/808 [04:10<03:35,  1.95it/s]Loading weights:  49%|████▊     | 393/808 [04:11<02:12,  3.12it/s]Loading weights:  49%|████▉     | 394/808 [04:13<03:59,  1.73it/s]Loading weights:  49%|████▉     | 395/808 [04:14<04:13,  1.63it/s]Loading weights:  50%|████▉     | 400/808 [04:15<02:33,  2.65it/s]Loading weights:  50%|████▉     | 403/808 [04:16<02:27,  2.74it/s]Loading weights:  50%|█████     | 404/808 [04:16<02:19,  2.89it/s]Loading weights:  50%|█████     | 406/808 [04:17<03:02,  2.21it/s]Loading weights:  50%|█████     | 407/808 [04:19<04:47,  1.39it/s]Loading weights:  50%|█████     | 408/808 [04:21<05:39,  1.18it/s]Loading weights:  51%|█████     | 410/808 [04:21<04:00,  1.66it/s]Loading weights:  51%|█████     | 413/808 [04:22<03:17,  2.00it/s]Loading weights:  51%|█████▏    | 415/808 [04:22<02:33,  2.57it/s]Loading weights:  51%|█████▏    | 416/808 [04:23<02:15,  2.90it/s]Loading weights:  52%|█████▏    | 417/808 [04:23<02:00,  3.25it/s]Loading weights:  52%|█████▏    | 419/808 [04:24<02:15,  2.87it/s]Loading weights:  52%|█████▏    | 420/808 [04:26<04:26,  1.45it/s]Loading weights:  52%|█████▏    | 421/808 [04:27<06:04,  1.06it/s]Loading weights:  52%|█████▏    | 422/808 [04:28<04:55,  1.30it/s]Loading weights:  53%|█████▎    | 426/808 [04:28<02:35,  2.46it/s]Loading weights:  53%|█████▎    | 427/808 [04:28<02:17,  2.77it/s]Loading weights:  53%|█████▎    | 428/808 [04:28<02:00,  3.16it/s]Loading weights:  53%|█████▎    | 430/808 [04:29<01:24,  4.48it/s]Loading weights:  53%|█████▎    | 431/808 [04:29<01:19,  4.73it/s]Loading weights:  53%|█████▎    | 432/808 [04:31<03:48,  1.64it/s]Loading weights:  54%|█████▎    | 433/808 [04:34<07:48,  1.25s/it]Loading weights:  54%|█████▎    | 434/808 [04:34<06:09,  1.01it/s]Loading weights:  54%|█████▍    | 438/808 [04:35<03:08,  1.96it/s]Loading weights:  54%|█████▍    | 439/808 [04:35<02:48,  2.19it/s]Loading weights:  55%|█████▍    | 442/808 [04:37<02:53,  2.11it/s]Loading weights:  55%|█████▍    | 443/808 [04:39<04:29,  1.36it/s]Loading weights:  55%|█████▌    | 446/808 [04:40<04:08,  1.46it/s]Loading weights:  55%|█████▌    | 447/808 [04:42<04:59,  1.20it/s]Loading weights:  56%|█████▌    | 449/808 [04:42<03:33,  1.68it/s]Loading weights:  56%|█████▌    | 452/808 [04:43<02:29,  2.39it/s]Loading weights:  56%|█████▋    | 456/808 [04:47<04:00,  1.47it/s]Loading weights:  57%|█████▋    | 460/808 [04:49<03:37,  1.60it/s]Loading weights:  57%|█████▋    | 461/808 [04:49<03:22,  1.72it/s]Loading weights:  58%|█████▊    | 465/808 [04:50<02:23,  2.39it/s]Loading weights:  58%|█████▊    | 466/808 [04:50<02:21,  2.41it/s]Loading weights:  58%|█████▊    | 467/808 [04:50<02:08,  2.65it/s]Loading weights:  58%|█████▊    | 469/808 [04:51<01:39,  3.41it/s]Loading weights:  58%|█████▊    | 471/808 [04:54<04:06,  1.37it/s]Loading weights:  58%|█████▊    | 472/808 [04:57<06:06,  1.09s/it]Loading weights:  59%|█████▉    | 475/808 [04:58<03:56,  1.41it/s]Loading weights:  59%|█████▉    | 478/808 [04:59<03:21,  1.64it/s]Loading weights:  59%|█████▉    | 480/808 [04:59<02:36,  2.10it/s]Loading weights:  60%|█████▉    | 482/808 [04:59<02:08,  2.54it/s]Loading weights:  60%|█████▉    | 483/808 [05:00<01:52,  2.89it/s]Loading weights:  60%|█████▉    | 484/808 [05:03<04:51,  1.11it/s]Loading weights:  60%|██████    | 486/808 [05:04<04:38,  1.16it/s]Loading weights:  60%|██████    | 488/808 [05:05<03:15,  1.64it/s]Loading weights:  61%|██████    | 491/808 [05:05<02:03,  2.56it/s]Loading weights:  61%|██████    | 492/808 [05:05<01:54,  2.76it/s]Loading weights:  61%|██████▏   | 495/808 [05:05<01:17,  4.03it/s]Loading weights:  61%|██████▏   | 496/808 [05:06<01:11,  4.37it/s]Loading weights:  62%|██████▏   | 497/808 [05:08<03:35,  1.44it/s]Loading weights:  62%|██████▏   | 498/808 [05:10<05:19,  1.03s/it]Loading weights:  62%|██████▏   | 499/808 [05:12<05:58,  1.16s/it]Loading weights:  62%|██████▏   | 500/808 [05:13<05:10,  1.01s/it]Loading weights:  62%|██████▏   | 504/808 [05:13<02:14,  2.25it/s]Loading weights:  62%|██████▎   | 505/808 [05:13<02:17,  2.20it/s]Loading weights:  63%|██████▎   | 506/808 [05:14<02:32,  1.98it/s]Loading weights:  63%|██████▎   | 508/808 [05:14<02:02,  2.45it/s]Loading weights:  63%|██████▎   | 510/808 [05:16<02:26,  2.04it/s]Loading weights:  63%|██████▎   | 511/808 [05:20<05:46,  1.17s/it]Loading weights:  63%|██████▎   | 513/808 [05:20<04:00,  1.23it/s]Loading weights:  64%|██████▍   | 517/808 [05:20<02:10,  2.23it/s]Loading weights:  64%|██████▍   | 520/808 [05:21<01:45,  2.73it/s]Loading weights:  65%|██████▍   | 523/808 [05:23<01:59,  2.38it/s]Loading weights:  65%|██████▍   | 524/808 [05:24<02:28,  1.91it/s]Loading weights:  65%|██████▍   | 525/808 [05:26<03:43,  1.27it/s]Loading weights:  65%|██████▌   | 527/808 [05:27<03:10,  1.47it/s]Loading weights:  66%|██████▌   | 530/808 [05:27<01:57,  2.36it/s]Loading weights:  66%|██████▌   | 531/808 [05:27<01:54,  2.43it/s]Loading weights:  66%|██████▌   | 532/808 [05:28<02:30,  1.84it/s]Loading weights:  66%|██████▌   | 533/808 [05:29<02:29,  1.84it/s]Loading weights:  66%|██████▋   | 536/808 [05:31<02:44,  1.66it/s]Loading weights:  66%|██████▋   | 537/808 [05:34<04:26,  1.02it/s]Loading weights:  67%|██████▋   | 538/808 [05:37<06:20,  1.41s/it]Loading weights:  67%|██████▋   | 540/808 [05:38<04:46,  1.07s/it]Loading weights:  67%|██████▋   | 543/808 [05:39<03:33,  1.24it/s]Loading weights:  67%|██████▋   | 544/808 [05:40<03:32,  1.24it/s]Loading weights:  68%|██████▊   | 547/808 [05:41<02:51,  1.52it/s]Loading weights:  68%|██████▊   | 548/808 [05:43<03:37,  1.19it/s]Loading weights:  68%|██████▊   | 550/808 [05:45<03:57,  1.08it/s]Loading weights:  68%|██████▊   | 551/808 [05:48<05:48,  1.36s/it]Loading weights:  68%|██████▊   | 552/808 [05:49<04:39,  1.09s/it]Loading weights:  68%|██████▊   | 553/808 [05:49<03:52,  1.10it/s]Loading weights:  69%|██████▉   | 557/808 [05:49<01:47,  2.34it/s]Loading weights:  69%|██████▉   | 559/808 [05:50<01:32,  2.69it/s]Loading weights:  69%|██████▉   | 560/808 [05:50<01:22,  3.01it/s]Loading weights:  69%|██████▉   | 561/808 [05:52<02:34,  1.60it/s]Loading weights:  70%|██████▉   | 563/808 [05:54<03:06,  1.32it/s]Loading weights:  70%|██████▉   | 564/808 [05:56<04:26,  1.09s/it]Loading weights:  70%|██████▉   | 565/808 [05:57<04:01,  1.01it/s]Loading weights:  70%|███████   | 569/808 [05:57<01:49,  2.18it/s]Loading weights:  71%|███████   | 570/808 [05:57<01:49,  2.17it/s]Loading weights:  71%|███████   | 573/808 [06:00<02:18,  1.70it/s]Loading weights:  71%|███████   | 574/808 [06:00<02:13,  1.76it/s]Loading weights:  71%|███████   | 575/808 [06:03<03:43,  1.04it/s]Loading weights:  71%|███████▏  | 576/808 [06:05<04:43,  1.22s/it]Loading weights:  71%|███████▏  | 577/808 [06:08<06:09,  1.60s/it]Loading weights:  72%|███████▏  | 578/808 [06:08<05:08,  1.34s/it]Loading weights:  72%|███████▏  | 582/808 [06:09<02:17,  1.65it/s]Loading weights:  72%|███████▏  | 585/808 [06:09<01:29,  2.50it/s]Loading weights:  73%|███████▎  | 586/808 [06:09<01:26,  2.57it/s]Loading weights:  73%|███████▎  | 587/808 [06:12<02:53,  1.27it/s]Loading weights:  73%|███████▎  | 589/808 [06:14<03:04,  1.18it/s]Loading weights:  73%|███████▎  | 590/808 [06:15<03:45,  1.03s/it]Loading weights:  74%|███████▎  | 595/808 [06:18<02:22,  1.49it/s]Loading weights:  74%|███████▍  | 599/808 [06:21<02:39,  1.31it/s]Loading weights:  75%|███████▍  | 603/808 [06:23<02:15,  1.51it/s]Loading weights:  75%|███████▍  | 604/808 [06:23<02:09,  1.58it/s]Loading weights:  75%|███████▌  | 609/808 [06:24<01:23,  2.38it/s]Loading weights:  76%|███████▌  | 611/808 [06:25<01:11,  2.74it/s]Loading weights:  76%|███████▌  | 612/808 [06:25<01:14,  2.62it/s]Loading weights:  76%|███████▌  | 614/808 [06:26<01:10,  2.76it/s]Loading weights:  76%|███████▌  | 615/808 [06:27<01:44,  1.84it/s]Loading weights:  76%|███████▌  | 616/808 [06:29<02:36,  1.23it/s]Loading weights:  77%|███████▋  | 621/808 [06:30<01:21,  2.31it/s]Loading weights:  77%|███████▋  | 624/808 [06:31<01:16,  2.42it/s]Loading weights:  77%|███████▋  | 626/808 [06:31<01:04,  2.84it/s]Loading weights:  78%|███████▊  | 627/808 [06:32<01:01,  2.97it/s]Loading weights:  78%|███████▊  | 628/808 [06:35<02:33,  1.17it/s]Loading weights:  78%|███████▊  | 631/808 [06:35<01:29,  1.97it/s]Loading weights:  78%|███████▊  | 633/808 [06:36<01:20,  2.18it/s]Loading weights:  79%|███████▉  | 637/808 [06:36<00:48,  3.56it/s]Loading weights:  79%|███████▉  | 639/808 [06:37<01:02,  2.69it/s]Loading weights:  79%|███████▉  | 641/808 [06:39<01:24,  1.97it/s]Loading weights:  79%|███████▉  | 642/808 [06:41<01:58,  1.40it/s]Loading weights:  80%|███████▉  | 643/808 [06:42<01:53,  1.45it/s]Loading weights:  80%|███████▉  | 646/808 [06:42<01:21,  2.00it/s]Loading weights:  80%|████████  | 650/808 [06:43<00:47,  3.34it/s]Loading weights:  81%|████████  | 653/808 [06:45<01:08,  2.25it/s]Loading weights:  81%|████████  | 654/808 [06:47<01:47,  1.43it/s]Loading weights:  81%|████████  | 655/808 [06:50<02:30,  1.01it/s]Loading weights:  82%|████████▏ | 660/808 [06:50<01:15,  1.97it/s]Loading weights:  82%|████████▏ | 662/808 [06:50<00:59,  2.44it/s]Loading weights:  82%|████████▏ | 664/808 [06:51<00:51,  2.79it/s]Loading weights:  82%|████████▏ | 666/808 [06:53<01:16,  1.85it/s]Loading weights:  83%|████████▎ | 667/808 [06:56<02:25,  1.03s/it]Loading weights:  83%|████████▎ | 668/808 [06:58<02:29,  1.06s/it]Loading weights:  83%|████████▎ | 674/808 [06:58<01:00,  2.22it/s]Loading weights:  84%|████████▍ | 677/808 [06:58<00:44,  2.95it/s]Loading weights:  84%|████████▍ | 678/808 [06:58<00:41,  3.13it/s]Loading weights:  84%|████████▍ | 679/808 [07:01<01:17,  1.67it/s]Loading weights:  84%|████████▍ | 680/808 [07:03<01:59,  1.07it/s]Loading weights:  84%|████████▍ | 681/808 [07:05<02:33,  1.21s/it]Loading weights:  84%|████████▍ | 682/808 [07:05<02:00,  1.04it/s]Loading weights:  85%|████████▍ | 686/808 [07:06<01:08,  1.77it/s]Loading weights:  85%|████████▌ | 688/808 [07:07<00:53,  2.25it/s]Loading weights:  85%|████████▌ | 690/808 [07:07<00:39,  2.98it/s]Loading weights:  86%|████████▌ | 692/808 [07:09<01:06,  1.74it/s]Loading weights:  86%|████████▌ | 693/808 [07:11<01:25,  1.34it/s]Loading weights:  86%|████████▌ | 694/808 [07:13<02:10,  1.14s/it]Loading weights:  86%|████████▌ | 695/808 [07:14<01:44,  1.09it/s]Loading weights:  86%|████████▌ | 696/808 [07:14<01:40,  1.12it/s]Loading weights:  87%|████████▋ | 699/808 [07:15<01:05,  1.65it/s]Loading weights:  87%|████████▋ | 703/808 [07:19<01:20,  1.31it/s]Loading weights:  87%|████████▋ | 706/808 [07:20<01:02,  1.62it/s]Loading weights:  88%|████████▊ | 707/808 [07:22<01:27,  1.16it/s]Loading weights:  88%|████████▊ | 712/808 [07:23<00:46,  2.05it/s]Loading weights:  88%|████████▊ | 714/808 [07:24<00:50,  1.88it/s]Loading weights:  88%|████████▊ | 715/808 [07:25<00:48,  1.91it/s]Loading weights:  89%|████████▉ | 718/808 [07:26<00:39,  2.27it/s]Loading weights:  89%|████████▉ | 719/808 [07:29<01:22,  1.07it/s]Loading weights:  89%|████████▉ | 722/808 [07:30<00:56,  1.51it/s]Loading weights:  90%|████████▉ | 725/808 [07:30<00:36,  2.24it/s]Loading weights:  90%|████████▉ | 726/808 [07:31<00:36,  2.24it/s]Loading weights:  90%|█████████ | 729/808 [07:32<00:30,  2.63it/s]Loading weights:  90%|█████████ | 731/808 [07:33<00:38,  1.98it/s]Loading weights:  91%|█████████ | 732/808 [07:35<00:58,  1.30it/s]Loading weights:  91%|█████████ | 733/808 [07:37<01:10,  1.07it/s]Loading weights:  91%|█████████ | 734/808 [07:37<00:57,  1.29it/s]Loading weights:  91%|█████████▏| 738/808 [07:37<00:25,  2.73it/s]Loading weights:  92%|█████████▏| 740/808 [07:38<00:19,  3.52it/s]Loading weights:  92%|█████████▏| 742/808 [07:38<00:18,  3.56it/s]Loading weights:  92%|█████████▏| 744/808 [07:40<00:31,  2.06it/s]Loading weights:  92%|█████████▏| 745/808 [07:43<00:56,  1.11it/s]Loading weights:  93%|█████████▎| 749/808 [07:44<00:31,  1.88it/s]Loading weights:  93%|█████████▎| 750/808 [07:44<00:28,  2.02it/s]Loading weights:  93%|█████████▎| 753/808 [07:44<00:17,  3.18it/s]Loading weights:  93%|█████████▎| 755/808 [07:50<00:53,  1.00s/it]Loading weights:  94%|█████████▍| 759/808 [07:51<00:35,  1.39it/s]Loading weights:  94%|█████████▍| 760/808 [07:52<00:32,  1.48it/s]Loading weights:  94%|█████████▍| 763/808 [07:52<00:20,  2.15it/s]Loading weights:  95%|█████████▍| 764/808 [07:52<00:18,  2.40it/s]Loading weights:  95%|█████████▍| 765/808 [07:52<00:18,  2.31it/s]Loading weights:  95%|█████████▍| 767/808 [07:54<00:19,  2.06it/s]Loading weights:  95%|█████████▌| 770/808 [07:56<00:24,  1.54it/s]Loading weights:  95%|█████████▌| 771/808 [08:01<00:49,  1.33s/it]Loading weights:  96%|█████████▌| 775/808 [08:01<00:23,  1.39it/s]Loading weights:  96%|█████████▌| 776/808 [08:02<00:20,  1.55it/s]Loading weights:  96%|█████████▋| 778/808 [08:02<00:15,  1.95it/s]Loading weights:  97%|█████████▋| 780/808 [08:04<00:18,  1.53it/s]Loading weights:  97%|█████████▋| 785/808 [08:06<00:11,  2.04it/s]Loading weights:  97%|█████████▋| 787/808 [08:06<00:08,  2.39it/s]Loading weights:  98%|█████████▊| 790/808 [08:06<00:05,  3.28it/s]Loading weights: 100%|██████████| 808/808 [08:06<00:00,  1.66it/s]
+[05/16/26 00:49:05] INFO     HTTP Request: HEAD                  _client.py:1025
+                             https://huggingface.co/google/medge                
+                             mma-27b-text-it/resolve/main/genera                
+                             tion_config.json "HTTP/1.1 200 OK"                 
+                    WARNING  Some parameters are on the meta big_modeling.py:448
+                             device because they were                           
+                             offloaded to the cpu.                              
+                    INFO     HTTP Request: HEAD                  _client.py:1025
+                             https://huggingface.co/google/medge                
+                             mma-27b-text-it/resolve/main/config                
+                             .json "HTTP/1.1 200 OK"                            
+[05/16/26 00:49:06] INFO     HTTP Request: HEAD                  _client.py:1025
+                             https://huggingface.co/google/medge                
+                             mma-27b-text-it/resolve/main/tokeni                
+                             zer_config.json "HTTP/1.1 200 OK"                  
+                    INFO     HTTP Request: GET                   _client.py:1025
+                             https://huggingface.co/api/models/g                
+                             oogle/medgemma-27b-text-it/tree/mai                
+                             n/additional_chat_templates?recursi                
+                             ve=false&expand=false "HTTP/1.1 404                
+                             Not Found"                                         
+                    INFO     HTTP Request: GET                   _client.py:1025
+                             https://huggingface.co/api/models/g                
+                             oogle/medgemma-27b-text-it/tree/mai                
+                             n?recursive=true&expand=false                      
+                             "HTTP/1.1 200 OK"                                  
+[05/16/26 00:49:10] INFO     HTTP Request: GET                   _client.py:1025
+                             https://huggingface.co/api/models/g                
+                             oogle/medgemma-27b-text-it                         
+                             "HTTP/1.1 200 OK"                                  
+Model ready. Starting server.
+INFO:     Started server process [1603057]
+INFO:     Waiting for application startup.
+[05/16/26 00:49:11] INFO     StreamableHTTP       streamable_http_manager.py:128
+                             session manager                                    
+                             started                                            
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+[05/16/26 00:49:17] INFO     Created new          streamable_http_manager.py:255
+                             transport with                                     
+                             session ID:                                        
+                             3e719aab4782469c9dea                               
+                             df569fad613d                                       
+                    INFO     Processing request of type            server.py:727
+                             CallToolRequest                                    
+[05/16/26 00:49:21] INFO     Processing request of type            server.py:727
+                             ListToolsRequest                                   
+                    INFO     Terminating session:         streamable_http.py:785
+                             3e719aab4782469c9deadf569fad                       
+                             613d                                               
+  [MCP client] tool_react_decide  round-trip: 4103ms
+                    INFO     Created new          streamable_http_manager.py:255
+                             transport with                                     
+                             session ID:                                        
+                             57c363e1aa0145b98026                               
+                             0c22d3d2af41                                       
+                    INFO     Processing request of type            server.py:727
+                             CallToolRequest                                    
+  [AUDIT] CALL  tool_get_advice                 call_id=bd558ac3  user=USER-PT-00001  patient=PT-00001
+                    INFO     CALL  tool_get_advice              mcp_logger.py:63
+                             call_id=bd558ac3                                   
+                             user=USER-PT-00001                                 
+                             patient=PT-00001                                   
+  [AUDIT] RESULT tool_get_advice                call_id=bd558ac3
+[05/16/26 00:50:17] INFO     RESULT tool_get_advice             mcp_logger.py:91
+                             call_id=bd558ac3                                   
+                    INFO     Processing request of type            server.py:727
+                             ListToolsRequest                                   
+                    INFO     Terminating session:         streamable_http.py:785
+                             57c363e1aa0145b980260c22d3d2                       
+                             af41                                               
+  [MCP client] tool_get_advice  round-trip: 55742ms
+                    INFO     Created new          streamable_http_manager.py:255
+                             transport with                                     
+                             session ID:                                        
+                             c58329c001d7471e972d                               
+                             b1384c9c84cd                                       
+                    INFO     Processing request of type            server.py:727
+                             CallToolRequest                                    
+  [AUDIT] CALL  tool_get_advice                 call_id=c650de58  user=USER-PT-00001  patient=PT-00001
+                    INFO     CALL  tool_get_advice              mcp_logger.py:63
+                             call_id=c650de58                                   
+                             user=USER-PT-00001                                 
+                             patient=PT-00001                                   
+  [AUDIT] RESULT tool_get_advice                call_id=c650de58
+[05/16/26 00:51:08] INFO     RESULT tool_get_advice             mcp_logger.py:91
+                             call_id=c650de58                                   
+                    INFO     Processing request of type            server.py:727
+                             ListToolsRequest                                   
+                    INFO     Terminating session:         streamable_http.py:785
+                             c58329c001d7471e972db1384c9c                       
+                             84cd                                               
+  [MCP client] tool_get_advice  round-trip: 51396ms
+                    INFO     Created new          streamable_http_manager.py:255
+                             transport with                                     
+                             session ID:                                        
+                             7aa52a80b9cb4bfd93e3                               
+                             72c4a322e10d                                       
+                    INFO     Processing request of type            server.py:727
+                             CallToolRequest                                    
+  [AUDIT] CALL  tool_get_advice                 call_id=00e2fbbf  user=USER-PT-00001  patient=PT-00001
+                    INFO     CALL  tool_get_advice              mcp_logger.py:63
+                             call_id=00e2fbbf                                   
+                             user=USER-PT-00001                                 
+                             patient=PT-00001                                   
+  [AUDIT] RESULT tool_get_advice                call_id=00e2fbbf
+[05/16/26 00:51:51] INFO     RESULT tool_get_advice             mcp_logger.py:91
+                             call_id=00e2fbbf                                   
+                    INFO     Processing request of type            server.py:727
+                             ListToolsRequest                                   
+                    INFO     Terminating session:         streamable_http.py:785
+                             7aa52a80b9cb4bfd93e372c4a322                       
+                             e10d                                               
+  [MCP client] tool_get_advice  round-trip: 43140ms
+                    INFO     Created new          streamable_http_manager.py:255
+                             transport with                                     
+                             session ID:                                        
+                             ed2b7d172f834954be06                               
+                             aec185afe596                                       
+                    INFO     Processing request of type            server.py:727
+                             CallToolRequest                                    
+[05/16/26 00:51:52] INFO     Processing request of type            server.py:727
+                             ListToolsRequest                                   
+                    INFO     Terminating session:         streamable_http.py:785
+                             ed2b7d172f834954be06aec185af                       
+                             e596                                               
+  [MCP client] tool_react_decide  round-trip: 1059ms
+[05/16/26 00:51:53] INFO     Created new          streamable_http_manager.py:255
+                             transport with                                     
+                             session ID:                                        
+                             1e9b64c365f6424bbd1f                               
+                             afb3dbeafba0                                       
+                    INFO     Processing request of type            server.py:727
+                             CallToolRequest                                    
+  [AUDIT] CALL  tool_get_advice                 call_id=b6382b40  user=USER-PT-00001  patient=PT-00001
+                    INFO     CALL  tool_get_advice              mcp_logger.py:63
+                             call_id=b6382b40                                   
+                             user=USER-PT-00001                                 
+                             patient=PT-00001                                   
+  [AUDIT] RESULT tool_get_advice                call_id=b6382b40
+[05/16/26 00:52:47] INFO     RESULT tool_get_advice             mcp_logger.py:91
+                             call_id=b6382b40                                   
+                    INFO     Processing request of type            server.py:727
+                             ListToolsRequest                                   
+                    INFO     Terminating session:         streamable_http.py:785
+                             1e9b64c365f6424bbd1fafb3dbea                       
+                             fba0                                               
+  [MCP client] tool_get_advice  round-trip: 54052ms
+                    INFO     Created new          streamable_http_manager.py:255
+                             transport with                                     
+                             session ID:                                        
+                             677fc7b8d685496c9833                               
+                             3a575750f19b                                       
+                    INFO     Processing request of type            server.py:727
+                             CallToolRequest                                    
+  [AUDIT] CALL  tool_get_advice                 call_id=27499a3e  user=USER-PT-00001  patient=PT-00001
+                    INFO     CALL  tool_get_advice              mcp_logger.py:63
+                             call_id=27499a3e                                   
+                             user=USER-PT-00001                                 
+                             patient=PT-00001                                   
+  [AUDIT] RESULT tool_get_advice                call_id=27499a3e
+[05/16/26 00:53:40] INFO     RESULT tool_get_advice             mcp_logger.py:91
+                             call_id=27499a3e                                   
+                    INFO     Processing request of type            server.py:727
+                             ListToolsRequest                                   
+                    INFO     Terminating session:         streamable_http.py:785
+                             677fc7b8d685496c98333a575750                       
+                             f19b                                               
+  [MCP client] tool_get_advice  round-trip: 53002ms
+                    INFO     Created new          streamable_http_manager.py:255
+                             transport with                                     
+                             session ID:                                        
+                             f579fb70ce6d48a49e7f                               
+                             28133491351e                                       
+                    INFO     Processing request of type            server.py:727
+                             CallToolRequest                                    
+  [AUDIT] CALL  tool_get_advice                 call_id=da797fe0  user=USER-PT-00001  patient=PT-00001
+                    INFO     CALL  tool_get_advice              mcp_logger.py:63
+                             call_id=da797fe0                                   
+                             user=USER-PT-00001                                 
+                             patient=PT-00001                                   
+  [AUDIT] RESULT tool_get_advice                call_id=da797fe0
+[05/16/26 00:54:37] INFO     RESULT tool_get_advice             mcp_logger.py:91
+                             call_id=da797fe0                                   
+                    INFO     Processing request of type            server.py:727
+                             ListToolsRequest                                   
+                    INFO     Terminating session:         streamable_http.py:785
+                             f579fb70ce6d48a49e7f28133491                       
+                             351e                                               
+  [MCP client] tool_get_advice  round-trip: 57742ms
+                    INFO     Created new          streamable_http_manager.py:255
+                             transport with                                     
+                             session ID:                                        
+                             d9ccbb9ad8f5433fa5d6                               
+                             fe4c6aa40448                                       
+                    INFO     Processing request of type            server.py:727
+                             CallToolRequest                                    
+[05/16/26 00:54:38] INFO     Processing request of type            server.py:727
+                             ListToolsRequest                                   
+                    INFO     Terminating session:         streamable_http.py:785
+                             d9ccbb9ad8f5433fa5d6fe4c6aa4                       
+                             0448                                               
+  [MCP client] tool_react_decide  round-trip: 999ms
+                    INFO     Created new          streamable_http_manager.py:255
+                             transport with                                     
+                             session ID:                                        
+                             43d6aca917d64722b0e5                               
+                             75edeb96781f                                       
+                    INFO     Processing request of type            server.py:727
+                             CallToolRequest                                    
+  [AUDIT] CALL  tool_assess_symptoms            call_id=d6ff0d9d  user=USER-PT-00001  patient=PT-00001
+                    INFO     CALL  tool_assess_symptoms         mcp_logger.py:63
+                             call_id=d6ff0d9d                                   
+                             user=USER-PT-00001                                 
+                             patient=PT-00001                                   
+  [AUDIT] ERROR  tool_assess_symptoms           call_id=d6ff0d9d  error=no such table: patients
+[05/16/26 00:55:36] ERROR    ERROR  tool_assess_symptoms        mcp_logger.py:93
+                             call_id=d6ff0d9d  error=no such                    
+                             table: patients                                    
+                    INFO     Terminating session:         streamable_http.py:785
+                             43d6aca917d64722b0e575edeb96                       
+                             781f                                               
+  [MCP client] tool_assess_symptoms  round-trip: 57414ms
+                    INFO     Created new          streamable_http_manager.py:255
+                             transport with                                     
+                             session ID:                                        
+                             11d144fc3ea14cdfbda1                               
+                             925e7a6d4bfc                                       
+                    INFO     Processing request of type            server.py:727
+                             CallToolRequest                                    
+  [AUDIT] CALL  tool_assess_symptoms            call_id=210e3111  user=USER-PT-00001  patient=PT-00001
+                    INFO     CALL  tool_assess_symptoms         mcp_logger.py:63
+                             call_id=210e3111                                   
+                             user=USER-PT-00001                                 
+                             patient=PT-00001                                   
+  [AUDIT] ERROR  tool_assess_symptoms           call_id=210e3111  error=no such table: patients
+[05/16/26 00:57:47] ERROR    ERROR  tool_assess_symptoms        mcp_logger.py:93
+                             call_id=210e3111  error=no such                    
+                             table: patients                                    
+                    INFO     Terminating session:         streamable_http.py:785
+                             11d144fc3ea14cdfbda1925e7a6d                       
+                             4bfc                                               
+  [MCP client] tool_assess_symptoms  round-trip: 131573ms
+                    INFO     Created new          streamable_http_manager.py:255
+                             transport with                                     
+                             session ID:                                        
+                             7742b915cbb24f31b1a5                               
+                             000cad29613c                                       
+                    INFO     Processing request of type            server.py:727
+                             CallToolRequest                                    
+  [AUDIT] CALL  tool_assess_symptoms            call_id=ac443f12  user=USER-PT-00001  patient=PT-00001
+                    INFO     CALL  tool_assess_symptoms         mcp_logger.py:63
+                             call_id=ac443f12                                   
+                             user=USER-PT-00001                                 
+                             patient=PT-00001                                   
+  [AUDIT] ERROR  tool_assess_symptoms           call_id=ac443f12  error=no such table: patients
+[05/16/26 00:58:44] ERROR    ERROR  tool_assess_symptoms        mcp_logger.py:93
+                             call_id=ac443f12  error=no such                    
+                             table: patients                                    
+                    INFO     Terminating session:         streamable_http.py:785
+                             7742b915cbb24f31b1a5000cad29                       
+                             613c                                               
+  [MCP client] tool_assess_symptoms  round-trip: 56510ms
+                    INFO     Created new          streamable_http_manager.py:255
+                             transport with                                     
+                             session ID:                                        
+                             6c771b86917c42b6aea1                               
+                             35d4ab803e07                                       
+                    INFO     Processing request of type            server.py:727
+                             CallToolRequest                                    
+[05/16/26 00:58:45] INFO     Processing request of type            server.py:727
+                             ListToolsRequest                                   
+                    INFO     Terminating session:         streamable_http.py:785
+                             6c771b86917c42b6aea135d4ab80                       
+                             3e07                                               
+  [MCP client] tool_react_decide  round-trip: 946ms
+                    INFO     Created new          streamable_http_manager.py:255
+                             transport with                                     
+                             session ID:                                        
+                             7ac25982c22040a4afb3                               
+                             912a209607f2                                       
+                    INFO     Processing request of type            server.py:727
+                             CallToolRequest                                    
+  [AUDIT] CALL  tool_get_advice                 call_id=1a3b85f2  user=USER-PT-00001  patient=PT-00001
+                    INFO     CALL  tool_get_advice              mcp_logger.py:63
+                             call_id=1a3b85f2                                   
+                             user=USER-PT-00001                                 
+                             patient=PT-00001                                   
+  [AUDIT] RESULT tool_get_advice                call_id=1a3b85f2
+[05/16/26 00:59:42] INFO     RESULT tool_get_advice             mcp_logger.py:91
+                             call_id=1a3b85f2                                   
+                    INFO     Processing request of type            server.py:727
+                             ListToolsRequest                                   
+                    INFO     Terminating session:         streamable_http.py:785
+                             7ac25982c22040a4afb3912a2096                       
+                             07f2                                               
+  [MCP client] tool_get_advice  round-trip: 57586ms
+                    INFO     Created new          streamable_http_manager.py:255
+                             transport with                                     
+                             session ID:                                        
+                             373942d89b0642848b2d                               
+                             efa27da3c3fc                                       
+                    INFO     Processing request of type            server.py:727
+                             CallToolRequest                                    
+  [AUDIT] CALL  tool_get_advice                 call_id=73cd7795  user=USER-PT-00001  patient=PT-00001
+                    INFO     CALL  tool_get_advice              mcp_logger.py:63
+                             call_id=73cd7795                                   
+                             user=USER-PT-00001                                 
+                             patient=PT-00001                                   
+  [AUDIT] RESULT tool_get_advice                call_id=73cd7795
+[05/16/26 01:00:57] INFO     RESULT tool_get_advice             mcp_logger.py:91
+                             call_id=73cd7795                                   
+                    INFO     Processing request of type            server.py:727
+                             ListToolsRequest                                   
+                    INFO     Terminating session:         streamable_http.py:785
+                             373942d89b0642848b2defa27da3                       
+                             c3fc                                               
+  [MCP client] tool_get_advice  round-trip: 74877ms
+                    INFO     Created new          streamable_http_manager.py:255
+                             transport with                                     
+                             session ID:                                        
+                             4378d2bbc40946d09e94                               
+                             2e3fb8162b59                                       
+                    INFO     Processing request of type            server.py:727
+                             CallToolRequest                                    
+  [AUDIT] CALL  tool_get_advice                 call_id=81ca965b  user=USER-PT-00001  patient=PT-00001
+                    INFO     CALL  tool_get_advice              mcp_logger.py:63
+                             call_id=81ca965b                                   
+                             user=USER-PT-00001                                 
+                             patient=PT-00001                                   
+  [AUDIT] RESULT tool_get_advice                call_id=81ca965b
+[05/16/26 01:02:07] INFO     RESULT tool_get_advice             mcp_logger.py:91
+                             call_id=81ca965b                                   
+                    INFO     Processing request of type            server.py:727
+                             ListToolsRequest                                   
+                    INFO     Terminating session:         streamable_http.py:785
+                             4378d2bbc40946d09e942e3fb816                       
+                             2b59                                               
+  [MCP client] tool_get_advice  round-trip: 70054ms
+                    INFO     Created new          streamable_http_manager.py:255
+                             transport with                                     
+                             session ID:                                        
+                             2ed302431c3c4fcc91a9                               
+                             3286678afd22                                       
+                    INFO     Processing request of type            server.py:727
+                             CallToolRequest                                    
+[05/16/26 01:02:08] INFO     Processing request of type            server.py:727
+                             ListToolsRequest                                   
+                    INFO     Terminating session:         streamable_http.py:785
+                             2ed302431c3c4fcc91a93286678a                       
+                             fd22                                               
+  [MCP client] tool_react_decide  round-trip: 1053ms
+                    INFO     Created new          streamable_http_manager.py:255
+                             transport with                                     
+                             session ID:                                        
+                             ac09b6881d994350a9c6                               
+                             2ecaf3dbdd9c                                       
+                    INFO     Processing request of type            server.py:727
+                             CallToolRequest                                    
+  [AUDIT] CALL  tool_assess_symptoms            call_id=61aa4ac6  user=USER-PT-00001  patient=PT-00001
+                    INFO     CALL  tool_assess_symptoms         mcp_logger.py:63
+                             call_id=61aa4ac6                                   
+                             user=USER-PT-00001                                 
+                             patient=PT-00001                                   
+  [AUDIT] ERROR  tool_assess_symptoms           call_id=61aa4ac6  error=no such table: patients
+[05/16/26 01:02:40] ERROR    ERROR  tool_assess_symptoms        mcp_logger.py:93
+                             call_id=61aa4ac6  error=no such                    
+                             table: patients                                    
+                    INFO     Terminating session:         streamable_http.py:785
+                             ac09b6881d994350a9c62ecaf3db                       
+                             dd9c                                               
+  [MCP client] tool_assess_symptoms  round-trip: 32011ms
+                    INFO     Created new          streamable_http_manager.py:255
+                             transport with                                     
+                             session ID:                                        
+                             903f22bea9f7486abe75                               
+                             8e873c5c005a                                       
+                    INFO     Processing request of type            server.py:727
+                             CallToolRequest                                    
+  [AUDIT] CALL  tool_assess_symptoms            call_id=d172c7d4  user=USER-PT-00001  patient=PT-00001
+                    INFO     CALL  tool_assess_symptoms         mcp_logger.py:63
+                             call_id=d172c7d4                                   
+                             user=USER-PT-00001                                 
+                             patient=PT-00001                                   
+  [AUDIT] ERROR  tool_assess_symptoms           call_id=d172c7d4  error=no such table: patients
+[05/16/26 01:03:38] ERROR    ERROR  tool_assess_symptoms        mcp_logger.py:93
+                             call_id=d172c7d4  error=no such                    
+                             table: patients                                    
+                    INFO     Terminating session:         streamable_http.py:785
+                             903f22bea9f7486abe758e873c5c                       
+                             005a                                               
+  [MCP client] tool_assess_symptoms  round-trip: 57896ms
+                    INFO     Created new          streamable_http_manager.py:255
+                             transport with                                     
+                             session ID:                                        
+                             5353fb1cc43a4c739f8a                               
+                             0685f2e28de0                                       
+                    INFO     Processing request of type            server.py:727
+                             CallToolRequest                                    
+  [AUDIT] CALL  tool_assess_symptoms            call_id=5433bb28  user=USER-PT-00001  patient=PT-00001
+                    INFO     CALL  tool_assess_symptoms         mcp_logger.py:63
+                             call_id=5433bb28                                   
+                             user=USER-PT-00001                                 
+                             patient=PT-00001                                   
+  [AUDIT] ERROR  tool_assess_symptoms           call_id=5433bb28  error=no such table: patients
+[05/16/26 01:04:25] ERROR    ERROR  tool_assess_symptoms        mcp_logger.py:93
+                             call_id=5433bb28  error=no such                    
+                             table: patients                                    
+                    INFO     Terminating session:         streamable_http.py:785
+                             5353fb1cc43a4c739f8a0685f2e2                       
+                             8de0                                               
+  [MCP client] tool_assess_symptoms  round-trip: 46607ms
+                    INFO     Created new          streamable_http_manager.py:255
+                             transport with                                     
+                             session ID:                                        
+                             1c37bc1f86804ef9b078                               
+                             8064966bf2dc                                       
+                    INFO     Processing request of type            server.py:727
+                             CallToolRequest                                    
+[05/16/26 01:04:26] INFO     Processing request of type            server.py:727
+                             ListToolsRequest                                   
+                    INFO     Terminating session:         streamable_http.py:785
+                             1c37bc1f86804ef9b0788064966b                       
+                             f2dc                                               
+  [MCP client] tool_react_decide  round-trip: 1074ms
