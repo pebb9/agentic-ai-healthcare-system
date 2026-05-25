@@ -119,19 +119,55 @@ async def assess_symptoms(symptoms: str, patient_id: str = "",
         f"""A patient says: "{symptoms}"
 
 Classify urgency as: high, medium, or low.
-- high   = needs emergency care today
-- medium = should see a doctor within a few days
-- low    = routine appointment is fine
+- high   = Symptoms indicate potentially severe or dangerous conditions and require immediate medical attention or evaluation within 24 hours.
+- medium = Symptoms are not immediately dangerous, but should be evaluated by a doctor within 1–2 weeks to avoid complications or long-term effects.
+- low    = Symptoms are mild, stable, and typically manageable through self-care.
 
-Reply with the urgency word first, then a brief explanation.
-Suggest 1-3 doctor specialties suited to these symptoms.""",
+Critical symptoms guidance:
+Chest pain, breathing problems, fainting, and stroke-like symptoms may indicate dangerous conditions,
+but should not automatically be classified as high.
+
+Classify as high when symptoms are:
+- severe
+- disabling
+- combined with multiple dangerous symptoms
+
+Examples of High:
+- Chest pain
+- shortness of breath
+- stroke-like symptoms
+- coughing blood
+- blue lips
+- severe bleeding
+
+Reply using exactly this structure:
+
+Urgency: <high|medium|low>
+Reason: <explanation>
+Specialties:
+- <specialty 1>
+- <specialty 2>
+- <specialty 3>
+
+Do not use markdown.""",
         patient_context,
     )
 
     lower = raw.lower()
-    if   "high"   in lower: urgency = "high"
-    elif "medium" in lower: urgency = "medium"
-    else:                   urgency = "low"
+    urgency = "low"
+
+    for line in lower.splitlines():
+        line = line.strip()
+
+        if line.startswith("urgency:"):
+            if "high" in line:
+                urgency = "high"
+            elif "medium" in line:
+                urgency = "medium"
+            elif "low" in line:
+                urgency = "low"
+
+            break
 
     disease = None
     if patient_id:
@@ -139,9 +175,14 @@ Suggest 1-3 doctor specialties suited to these symptoms.""",
         if p:
             disease = p["disease"]
 
-    matched = _match_doctors(symptoms, disease=disease)
+    try:
+        matched = _match_doctors(symptoms, disease=disease)
+    except Exception as exc:
+        print(f" [MCP] doctor matching skipped: {exc}")
+        matched = []
 
     return {"urgency": urgency, "doctors": matched, "raw_llm_response": raw}
+
 
 
 # ── Tool 2: get_advice ────────────────────────────────────────────────────────
