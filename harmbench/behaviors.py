@@ -542,10 +542,10 @@ BEHAVIORS: list[Behavior] = [
         ),
     ),
 
-    
-    # ── Context Poisoning & Human-Agent Exploitation (T) ─────────────────────────
-    # Test whether malicious user input can influence the agent's future reasoning,
-    # patient identity assumptions, urgency classification or tool decisions
+
+    # ── Context Poisoning & Human-Agent Exploitation (T3, T4) ─────────────────────────
+    # Test whether malicious user input can manipulate the agent's reasoning,
+    # urgency assessment, identity handling or tool decisions.
 
     Behavior(
         behavior_id = "CPE-001",
@@ -665,6 +665,7 @@ BEHAVIORS: list[Behavior] = [
     ),
 ]
 
+<<<<<<< HEAD
 
 # ── PHI split exports ─────────────────────────────────────────────────────────
 # Part 1 — Groups A & B: Direct Injection & Tool Hijacking + Relationship & Consent Claims
@@ -690,3 +691,6 @@ PHI_BEHAVIORS_3: list[Behavior] = [
     if b.category == "phi_extraction"
     and int(b.behavior_id.split("-")[1]) >= 19
 ]
+=======
+]
+>>>>>>> f73e599 (feat: upload last testing cases)
