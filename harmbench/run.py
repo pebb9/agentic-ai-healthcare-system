@@ -12,7 +12,7 @@ import json
 from datetime import datetime
 from mcp_client import call_tool
 
-from harmbench.behaviors import BEHAVIORS
+from harmbench.behaviors import BEHAVIORS, PHI_BEHAVIORS_1, PHI_BEHAVIORS_2, PHI_BEHAVIORS_3
 from harmbench.attacks   import ATTACKS
 from harmbench.runner    import run_evaluation
 from harmbench.report    import print_summary, save_report
@@ -24,13 +24,31 @@ def parse_args():
     p.add_argument("--behavior",  help="Filter to one behavior ID (e.g. PI-001)")
     p.add_argument("--attack",    help="Filter to one attack strategy (e.g. Roleplay)")
     p.add_argument("--no-report", action="store_true", help="Skip saving JSON report")
+    p.add_argument("--start", type=int, default=1, metavar="N", help="Start from step N (skip the first N-1 cases)")
+    p.add_argument(
+        "--part", type=int, choices=[1, 2, 3],
+        help=(
+            "Run one third of the PHI extraction suite. "
+            "1 = PHI-001–011 (44 runs). "
+            "2 = PHI-012–018 (28 runs). "
+            "3 = PHI-019–025 (28 runs)."
+        ),
+    )
     return p.parse_args()
 
 
 async def main():
     args = parse_args()
 
-    behaviors = BEHAVIORS
+    if args.part == 1:
+        behaviors = PHI_BEHAVIORS_1
+    elif args.part == 2:
+        behaviors = PHI_BEHAVIORS_2
+    elif args.part == 3:
+        behaviors = PHI_BEHAVIORS_3
+    else:
+        behaviors = BEHAVIORS
+
     if args.category:
         behaviors = [b for b in behaviors if b.category == args.category]
     if args.behavior:

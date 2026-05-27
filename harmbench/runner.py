@@ -29,6 +29,10 @@ from mcp_client import call_tool
 from database import init_db
 from config     import DB_FILE
 
+from agent import run_agent
+from database import get_patient, get_appointments_for_patient
+from Validations import validate_patient_id
+
 # ── Patient context ───────────────────────────────────────────────────────────
 
 # PT-00001 — the logged-in patient.
@@ -96,9 +100,19 @@ async def _run_target(behavior: Behavior, attacked_prompt: str) -> str:
         return json.dumps(result)
 
     if behavior.entry_point == "patient_id_input":
-        return _test_sql_injection(attacked_prompt)
+        return _test_sql_injection(attacked_prompt, behavior.functional)
+    
+    if behavior.entry_point == "run_agent":
+        result = await run_agent(
+            user_message=attacked_prompt,
+            patient_id=RAG_TEST_PATIENT_ID,
+            patient_context=patient_context,
+        )
 
-    return "[no entry point matched]"
+    if behavior.entry_point == "login_patient_id":
+        return _test_login_patient_id(attacked_prompt)
+    
+    return json.dumps(result)
 
 
 async def _run_multiturn(behavior: Behavior, attacked_prompt: str) -> str:
@@ -145,12 +159,16 @@ async def _run_multiturn(behavior: Behavior, attacked_prompt: str) -> str:
     return json.dumps(result)
 
 
-def _test_sql_injection(patient_id_input: str) -> str:
+def _test_sql_injection(user_input: str, functional: str = "standard") -> str:
     """
-    Compare a parameterised query (safe) against raw string interpolation
-    (unsafe) using the correct schema: patients(id, name, ...).
+    Compare the real production-safe helper against a simulated unsafe
+    string-interpolated SQL query for the same sink.
 
-    The unsafe path is only simulated — it never affects production data.
+    Supported sinks:
+      - patient_lookup
+      - appointment_history
+
+    The unsafe path is only simulated and does not modify production data.
     """
     if not os.path.exists(DB_FILE):
         return json.dumps({"error": "DB not found — run main.py first"})
@@ -158,37 +176,100 @@ def _test_sql_injection(patient_id_input: str) -> str:
     conn = sqlite3.connect(DB_FILE)
     conn.row_factory = sqlite3.Row
 
-    # Safe path — parameterised query (what the code actually does)
     try:
-        row         = conn.execute(
-            "SELECT id, name FROM patients WHERE id = ?",
-            (patient_id_input.upper(),),
-        ).fetchone()
-        safe_result = dict(row) if row else "no match"
-    except Exception as exc:
-        safe_result = f"ERROR: {exc}"
+        # -------------------------------------------------------------
+        # 1) Patient lookup
+        # -------------------------------------------------------------
+        if functional == "standard":
+            try:
+                row = get_patient(user_input)
+                safe_result = dict(row) if row else "no match"
+            except Exception as exc:
+                safe_result = f"ERROR: {exc}"
 
-    # Unsafe path — raw string interpolation (simulated vulnerability)
-    try:
-        rows          = conn.execute(
-            f"SELECT id, name FROM patients "
-            f"WHERE id = '{patient_id_input}'"
-        ).fetchall()
-        unsafe_result = [dict(r) for r in rows] if rows else "no match"
-    except Exception as exc:
-        unsafe_result = f"ERROR: {exc}"
+            try:
+                rows = conn.execute(
+                    f"SELECT id, name FROM patients WHERE id = '{user_input}'"
+                ).fetchall()
+                unsafe_result = [dict(r) for r in rows] if rows else "no match"
+            except Exception as exc:
+                unsafe_result = f"ERROR: {exc}"
 
-    conn.close()
+        # -------------------------------------------------------------
+        # 2) Appointment history lookup
+        # -------------------------------------------------------------
+        elif functional == "appointment_history":
+            try:
+                rows = get_appointments_for_patient(user_input, limit=20)
+                safe_result = [dict(r) for r in rows] if rows else "no match"
+            except Exception as exc:
+                safe_result = f"ERROR: {exc}"
+
+            try:
+                rows = conn.execute(
+                    f"""
+                    SELECT a.*, d.name AS doctor_name, d.specialty
+                    FROM appointments a
+                    JOIN doctors d ON d.id = a.doctor_id
+                    WHERE a.patient_id = '{user_input}'
+                    ORDER BY a.scheduled_at
+                    LIMIT 20
+                    """
+                ).fetchall()
+                unsafe_result = [dict(r) for r in rows] if rows else "no match"
+            except Exception as exc:
+                unsafe_result = f"ERROR: {exc}"
+
+        else:
+            return json.dumps({"error": f"Unknown SQLi functional: {functional}"})
+
+    finally:
+        conn.close()
 
     injection_succeeds = safe_result != unsafe_result
 
     return json.dumps({
-        "parameterized_result":     safe_result,
-        "raw_interpolation_result": unsafe_result,
-        "injection_would_succeed":  injection_succeeds,
+        "functional": functional,
+        "safe_result": safe_result,
+        "unsafe_result": unsafe_result,
+        "injection_would_succeed": injection_succeeds,
     })
 
 
+def _test_login_patient_id(patient_id_input: str) -> str:
+    """
+    Mimic the real login/patient-ID path from main.py.
+
+    This is a front-door validation test, not a sink-level SQLi simulation.
+    """
+    try:
+        raw = patient_id_input.strip().upper()
+        ok, msg = validate_patient_id(raw)
+
+        if not ok:
+            return json.dumps({
+                "input": patient_id_input,
+                "normalized_input": raw,
+                "validation_passed": False,
+                "validation_message": msg,
+            })
+
+        patient = get_patient(raw)
+
+        return json.dumps({
+            "input": patient_id_input,
+            "normalized_input": raw,
+            "validation_passed": True,
+            "lookup_result": dict(patient) if patient else "no match",
+        })
+
+    except Exception as exc:
+        return json.dumps({
+            "input": patient_id_input,
+            "normalized_input": patient_id_input.strip().upper(),
+            "validation_passed": False,
+            "error": str(exc),
+        })
 # ── Main evaluation loop ──────────────────────────────────────────────────────
 
 async def run_evaluation(
