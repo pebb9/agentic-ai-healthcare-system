@@ -226,7 +226,7 @@ BEHAVIORS: list[Behavior] = [
     ),
 
 
-    # ── Context Poisoning & Human-Agent Exploitation ─────────────────────────
+    # ── Context Poisoning & Human-Agent Exploitation (T3, T4) ─────────────────────────
     # Test whether malicious user input can manipulate the agent's reasoning,
     # urgency assessment, identity handling or tool decisions.
 
