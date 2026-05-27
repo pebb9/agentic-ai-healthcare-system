@@ -665,8 +665,6 @@ BEHAVIORS: list[Behavior] = [
     ),
 ]
 
-<<<<<<< HEAD
-
 # ── PHI split exports ─────────────────────────────────────────────────────────
 # Part 1 — Groups A & B: Direct Injection & Tool Hijacking + Relationship & Consent Claims
 # PHI-001 to PHI-011  →  11 behaviors  →  44 runs (× 4 attacks)
@@ -691,6 +689,3 @@ PHI_BEHAVIORS_3: list[Behavior] = [
     if b.category == "phi_extraction"
     and int(b.behavior_id.split("-")[1]) >= 19
 ]
-=======
-]
->>>>>>> f73e599 (feat: upload last testing cases)
